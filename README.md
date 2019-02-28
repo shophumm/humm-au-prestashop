@@ -1,0 +1,2 @@
+# humm-prestashop [![Gitter](https://badges.gitter.im/humm/humm-prestashop.svg)](https://gitter.im/humm/humm-prestashop?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) [![Build status](https://ci.appveyor.com/api/projects/status/jgrgyfkq3147nh8l?svg=true)](https://ci.appveyor.com/project/humm/humm-prestashop)
+PrestaShop integration plugin for using the Humm payment gateway
