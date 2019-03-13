@@ -45,9 +45,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $address_shipping = new Address( $cart->id_address_delivery );
         $country_billing  = new Country( $address_shipping->id_country );
         $country_shipping = new Country( $address_shipping->id_country );
-        $state_billing    = new State( $address_billing->id_state );
-        $state_shipping   = new State( $address_shipping->id_state );
-
+        // $customerPhone = $address_billing->$phone_mobile?$address_billing->$phone_mobile:($address_billing->$phone?$address_billing->$phone:'');
         $query                = array(
             'x_currency'                   => $this->context->currency->iso_code,
             'x_url_callback'               => $this->context->link->getModuleLink( 'hummprestashop', 'confirmation' ),
@@ -62,17 +60,17 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_first_name'        => $customer->firstname,
             'x_customer_last_name'         => $customer->lastname,
             'x_customer_email'             => $customer->email,
-            'x_customer_phone'             => $address_shipping->phone,
+            // 'x_customer_phone' => $customerPhone,
             'x_customer_billing_address1'  => $address_billing->address1,
             'x_customer_billing_address2'  => $address_billing->address2,
             'x_customer_billing_city'      => $address_billing->city,
-            'x_customer_billing_state'     => $state_billing->name,
+            'x_customer_billing_state'     => 'ACT',
             'x_customer_billing_zip'       => $address_billing->postcode,
             'x_customer_billing_country'   => $country_billing->iso_code,
             'x_customer_shipping_address1' => $address_shipping->address1,
             'x_customer_shipping_address2' => $address_shipping->address2,
             'x_customer_shipping_city'     => $address_shipping->city,
-            'x_customer_shipping_state'    => $state_shipping->name,
+            'x_customer_shipping_state'    => '',
             'x_customer_shipping_zip'      => $address_shipping->postcode,
             'x_customer_shipping_country'  => $country_shipping->iso_code,
             'x_test'                       => 'false'
@@ -81,18 +79,17 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $query['x_signature'] = $signature;
 
         $this->context->smarty->assign( array(
-                'nbProducts'    => $cart->nbProducts(),
-                'cust_currency' => $cart->id_currency,
-                'currencies'    => $this->module->getCurrency( (int) $cart->id_currency ),
-                'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
-                'this_path'     => $this->module->getPathUri(),
-                'this_path_bw'  => $this->module->getPathUri(),
-                'form_query'    => $this->generate_processing_form( Configuration::get( 'HUMM_GATEWAY_URL' ), $query ),
-                'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
-            )
-        );
+            'nbProducts'    => $cart->nbProducts(),
+            'cust_currency' => $cart->id_currency,
+            'currencies'    => $this->module->getCurrency( (int) $cart->id_currency ),
+            'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
+            'this_path'     => $this->module->getPathUri(),
+            'this_path_bw'  => $this->module->getPathUri(),
+            'form_query'    => $this->generate_processing_form( Configuration::get( 'HUMM_GATEWAY_URL' ), $query ),
+            'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
+        ) );
 
-        $this->setTemplate( 'module:hummprestashop/views/templates/front/redirect.tpl' );
+        return $this->setTemplate( 'redirect.tpl' );
     }
 
     protected function displayError( $message, $description = false ) {
@@ -108,9 +105,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
          */
         array_push( $this->errors, $this->module->l( $message ), $description );
 
-        $this->setTemplate( $this->local_path . 'error.tpl' );
-
-        return;
+        return $this->setTemplate( 'error.tpl' );
     }
 
     function generate_processing_form( $checkoutUrl, $query ) {

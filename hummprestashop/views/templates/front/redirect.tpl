@@ -24,23 +24,33 @@
 *}
 
 <div class="hummmodal">
+
     {capture name=path}
         <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}"
            title="{l s='Go back to the Checkout' mod='hummprestashop'}">{l s='Checkout' mod='hummprestashop'}</a>
         <span class="navigation-pipe">{$navigationPipe}</span>{l s='Humm' mod='hummprestashop'}
     {/capture}
 
+    {include file="$tpl_dir./breadcrumb.tpl"}
+
+    <h2>{l s='Order summary' mod='hummprestashop'}</h2>
+
     {assign var='current_step' value='payment'}
+    {include file="$tpl_dir./order-steps.tpl"}
 
     {if $nbProducts <= 0}
         <p class="warning ">{l s='Your shopping cart is empty.' mod='hummprestashop'}</p>
     {else}
-        {$form_query nofilter}
+        {$form_query}
+        <p class="cart_navigation" id="cart_navigation">
+            <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html'}"
+               class="button_large">{l s='Other payment methods' mod='hummprestashop'}</a>
+        </p>
     {/if}
     <script type="text/javascript">
-        document.addEventListener("DOMContentLoaded", function () {
-            document.body.className += ' ' + 'hummloading';
-            document.getElementById('hummload').submit();
+        $body = $("body");
+        $(document).ready(function () {
+            $body.addClass("hummloading");
+            $('#hummload').submit();
         });
     </script>
-</div>

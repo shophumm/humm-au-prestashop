@@ -24,7 +24,7 @@
 *}
 
 {if (isset($status) == true) && ($status == 'ok')}
-    <h3>{l s='Your order on %s is complete.' sprintf=[$shop_name] mod='hummprestashop'}</h3>
+    <h3>{l s='Your order on %s is complete.' sprintf=$shop_name mod='hummprestashop'}</h3>
     <p>
         <br/>- {l s='Amount' mod='hummprestashop'} : <span
                 class="price"><strong>{$total|escape:'htmlall':'UTF-8'}</strong></span>
@@ -35,7 +35,7 @@
                 href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team.' mod='hummprestashop'}</a>
     </p>
 {else}
-    <h3>{l s='Your order on %s has not been accepted.' sprintf=[$shop_name] mod='hummprestashop'}</h3>
+    <h3>{l s='Your order on %s has not been accepted.' sprintf=$shop_name mod='hummprestashop'}</h3>
     <p>
         <br/>- {l s='Reference' mod='hummprestashop'} <span
                 class="reference"> <strong>{$reference|escape:'html':'UTF-8'}</strong></span>

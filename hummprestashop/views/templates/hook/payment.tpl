@@ -26,15 +26,20 @@
     <div class="col-xs-12">
         <p class="payment_module" id="hummprestashop_payment_button">
             {if $humm_validation_errors }
-                {$humm_validation_errors}
+                <a href="#" onclick="return false;">
+                    <img src="{$this_path_ssl}images/{if $humm_logo}{$humm_logo}{else}humm.png{/if}"
+                         style="width: 120px;margin-right: 10px;"
+                         alt="{l s='Pay with my payment module' mod='hummprestashop'}"/>
+                    {$humm_validation_errors}
+                </a>
             {else}
-                <span>
-					{if isset($humm_description) && $humm_description}
-                        {$humm_description}
-                    {else}
-                        {l s='Breathe easy with Humm, an interest-free installment payment plan' mod='hummprestashop'}
-                    {/if}
-				</span>
+                <a href="{$link->getModuleLink('hummprestashop', 'redirect', array(), true)|escape:'htmlall':'UTF-8'}"
+                   title="{l s='Pay with my payment module' mod='hummprestashop'}">
+                    <img src="{$this_path_ssl}images/{if $humm_logo}{$humm_logo}{else}humm.png{/if}"
+                         style="width: 120px;margin-right: 10px;"/>
+                    {if $humm_title}{$humm_title}{else}{l s='Humm' mod='hummprestashop'}{/if}
+                    <span>({if isset($humm_description) && $humm_description}{$humm_description}{else}{l s='Breathe easy with Humm, an interest-free installment payment plan' mod='hummprestashop'}{/if})</span>
+                </a>
             {/if}
         </p>
     </div>

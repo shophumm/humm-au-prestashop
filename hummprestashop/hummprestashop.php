@@ -24,8 +24,6 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
-
 if ( ! defined( '_PS_VERSION_' ) ) {
     exit;
 }
@@ -55,7 +53,7 @@ class Hummprestashop extends PaymentModule {
         $this->limited_countries  = array( 'AU', 'NZ' );
         $this->limited_currencies = array( 'AUD', 'NZD' );
 
-        $this->ps_versions_compliancy = array( 'min' => '1.7', 'max' => '1.7.99.99' );
+        $this->ps_versions_compliancy = array( 'min' => '1.6', 'max' => '1.6.99.99' );
     }
 
     /**
@@ -77,8 +75,10 @@ class Hummprestashop extends PaymentModule {
         return parent::install() &&
                $this->registerHook( 'header' ) &&
                $this->registerHook( 'backOfficeHeader' ) &&
-               $this->registerHook( 'paymentOptions' ) &&
-               $this->registerHook( 'paymentReturn' );
+               $this->registerHook( 'payment' ) && //this is an alias for displayPayment ('payment' is deprecated)
+               $this->registerHook( 'paymentReturn' ) && // this is an alias for displayPaymentReturn ('paymentReturn' is deprecated)
+               $this->registerHook( 'displayPayment' ) &&
+               $this->registerHook( 'displayPaymentReturn' );
     }
 
     public function uninstall() {
@@ -151,7 +151,7 @@ class Hummprestashop extends PaymentModule {
         }
 
         $this->context->smarty->assign( 'module_dir', $this->_path );
-        $output = $this->fetch( $this->local_path . 'views/templates/admin/configure.tpl' );
+        $output = $this->context->smarty->fetch( $this->local_path . 'views/templates/admin/configure.tpl' );
 
         $html .= $output . $this->renderForm();
 
@@ -268,6 +268,8 @@ class Hummprestashop extends PaymentModule {
      * Save form data.
      */
     protected function postProcess() {
+        $form_values = $this->getConfigFormValues();
+
         //custom logo image upload processing (if necessary)
         //HUMM_LOGO config property is updated here
         $this->processCustomHummLogoUpload();
@@ -308,86 +310,36 @@ class Hummprestashop extends PaymentModule {
     /**
      * This method is used to render the payment button,
      * Take care if the button should be displayed or not.
-     *
-     * @param $params
-     *
-     * @return mixed
-     * @throws Exception
      */
-    public function hookPaymentOptions( $params ) {
-        if ( ! $this->active ) {
-            return false;
-        }
-        if ( ! $this->checkCurrency( $params['cart'] ) ) {
-            return false;
-        }
-
-        if ( $this->cartValidationErrors( $params['cart'] ) ) {
-            return false;
-        }
-
-        $newOption = new PaymentOption();
-        $newOption->setModuleName( $this->name );
-        $newOption->setCallToActionText( $this->trans( 'Pay by Humm', array(), 'Modules.Hummprestashop.Admin' ) );
-        $newOption->setAction( $this->context->link->getModuleLink( $this->name, 'redirect', array(), true ) );
-        $newOption->setAdditionalInformation( $this->fetch( $this->local_path . 'views/templates/hook/payment.tpl' ) );
-        $newOption->setLogo( Media::getMediaPath( $this->local_path . 'images/humm-small.png' ) );
-
-        return [ $newOption ];
+    public function hookPayment( $params ) {
+        return $this->hookDisplayPayment( $params );
     }
 
     /**
      * This hook is used to display the order confirmation page.
-     *
-     * @param $params
-     *
-     * @return bool
      */
     public function hookPaymentReturn( $params ) {
-        if ( $this->active == false ) {
-            return false;
-        }
-
-        $order = $params['order'];
-
-        if ( $order->getCurrentOrderState()->id != Configuration::get( 'PS_OS_ERROR' ) ) {
-            $this->smarty->assign( 'status', 'ok' );
-        }
-
-        $total = Tools::displayPrice( $params['order']->getOrdersTotalPaid(), new Currency( $params['order']->id_currency ), false );
-        $this->smarty->assign( array(
-            'id_order'  => $order->id,
-            'reference' => $order->reference,
-            'params'    => $params,
-            'total'     => $total,
-            'shop_name' => $this->context->shop->name
-        ) );
-
-        return $this->display( __FILE__, 'views/templates/hook/confirmation.tpl' );
+        return $this->hookDisplayPaymentReturn( $params );
     }
 
-    public function checkCurrency( $cart ) {
-        $currency_order    = new Currency( (int) ( $cart->id_currency ) );
-        $currencies_module = $this->getCurrency( (int) $cart->id_currency );
+    public function hookDisplayPayment( $params ) {
+        $cart          = $params['cart'];
+        $config_values = $this->getConfigFormValues();
 
-        if ( is_array( $currencies_module ) ) {
-            foreach ( $currencies_module as $currency_module ) {
-                if ( $currency_order->id == $currency_module['id_currency'] ) {
-                    return true;
-                }
-            }
-        }
+        $this->smarty->assign( array(
+            'humm_title'             => $config_values['HUMM_TITLE'],
+            'humm_logo'              => $config_values['HUMM_LOGO'],
+            'humm_description'       => $config_values['HUMM_DESCRIPTION'],
+            'this_path_ssl'          => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
+            'humm_validation_errors' => $this->cartValidationErrors( $cart )
+        ) );
 
-        return false;
+        return $this->display( __FILE__, 'views/templates/hook/payment.tpl' );
     }
 
     /**
      * Checks the quote for validity
-     *
-     * @param $cart
-     *
-     * @return string
-     * @throws Exception
+     * @throws Mage_Api_Exception
      */
     private function cartValidationErrors( $cart ) {
         $shippingAddress = new Address( (int) $cart->id_address_delivery );
@@ -402,11 +354,8 @@ class Hummprestashop extends PaymentModule {
             return "Humm doesn't support purchases less than $20.";
         }
 
-        try {
-            $countryInfo = HummCommon::getCountryInfoFromGatewayUrl();
-        } catch ( Exception $exception ) {
-            return $exception->getMessage();
-        }
+        $countryInfo = HummCommon::getCountryInfoFromGatewayUrl();
+
         if ( $billingCountryIsoCode != $countryInfo['countryCode'] || $currencyIsoCode != $countryInfo['currencyCode'] ) {
             return "Humm doesn't support purchases from outside " . ( $countryInfo['countryName'] ) . ".";
         }
@@ -418,6 +367,27 @@ class Hummprestashop extends PaymentModule {
         return "";
     }
 
+    //TODO: is this really needed?
+    public function hookDisplayPaymentReturn( $params ) {
+        if ( $this->active == false ) {
+            return;
+        }
+
+        $order = $params['objOrder'];
+
+        if ( $order->getCurrentOrderState()->id != Configuration::get( 'PS_OS_ERROR' ) ) {
+            $this->smarty->assign( 'status', 'ok' );
+        }
+
+        $this->smarty->assign( array(
+            'id_order'  => $order->id,
+            'reference' => $order->reference,
+            'params'    => $params,
+            'total'     => Tools::displayPrice( $params['total_to_pay'], $params['currencyObj'], false ),
+        ) );
+
+        return $this->display( __FILE__, 'views/templates/hook/confirmation.tpl' );
+    }
 
     private function processCustomHummLogoUpload() {
         $logoKey = 'HUMM_LOGO';

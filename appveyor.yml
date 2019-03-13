@@ -1,7 +1,7 @@
 branches:
   only:
-    - master
-    - PS_1.7
+    - master/1.6
+    - master/1.7
 environment:
   tag_name: "%APPVEYOR_REPO_TAG_NAME%"
   release_name: "humm_prestashop_v%appveyor_repo_tag_name%.zip"
