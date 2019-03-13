@@ -39,7 +39,7 @@
     {/if}
     <script type="text/javascript">
         document.addEventListener("DOMContentLoaded", function () {
-            document.body.className += ' '+'hummloading';
+            document.body.className += ' ' + 'hummloading';
             document.getElementById('hummload').submit();
         });
     </script>

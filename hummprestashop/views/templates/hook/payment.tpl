@@ -23,19 +23,19 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 <div class="row">
-	<div class="col-xs-12">
-		<p class="payment_module" id="hummprestashop_payment_button">
-			{if $humm_validation_errors }
-				{$humm_validation_errors}
-			{else}
-				<span>
+    <div class="col-xs-12">
+        <p class="payment_module" id="hummprestashop_payment_button">
+            {if $humm_validation_errors }
+                {$humm_validation_errors}
+            {else}
+                <span>
 					{if isset($humm_description) && $humm_description}
-						{$humm_description}
-					{else}
-						{l s='Breathe easy with Humm, an interest-free installment payment plan' mod='hummprestashop'}
-					{/if}
+                        {$humm_description}
+                    {else}
+                        {l s='Breathe easy with Humm, an interest-free installment payment plan' mod='hummprestashop'}
+                    {/if}
 				</span>
-			{/if}
-		</p>
-	</div>
+            {/if}
+        </p>
+    </div>
 </div>
