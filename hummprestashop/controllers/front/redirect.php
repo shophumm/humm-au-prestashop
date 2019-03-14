@@ -73,7 +73,8 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_shipping_state'    => '',
             'x_customer_shipping_zip'      => $address_shipping->postcode,
             'x_customer_shipping_country'  => $country_shipping->iso_code,
-            'x_test'                       => 'false'
+            'x_test'                       => 'false',
+            'version_info'                 => 'plugin_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr( _PS_VERSION_, 0, 3 )
         );
         $signature            = HummCommon::generateSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
         $query['x_signature'] = $signature;
@@ -126,9 +127,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $html = "<form style='display:none;' id='hummload' method='post' action='$checkoutUrl'>";
 
         foreach ( $query as $item => $value ) {
-            if ( substr( $item, 0, 2 ) === "x_" ) {
-                $html .= "<input id='$item' name='$item' value='" . htmlspecialchars( $value, ENT_QUOTES ) . "' type='hidden'/>";
-            }
+            $html .= "<input id='$item' name='$item' value='" . htmlspecialchars( $value, ENT_QUOTES ) . "' type='hidden'/>";
         }
 
         $html .= "</form>";
