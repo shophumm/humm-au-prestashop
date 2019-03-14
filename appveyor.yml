@@ -7,7 +7,7 @@ environment:
   release_name: "humm_prestashop_v%appveyor_repo_tag_name%.zip"
 before_build:
   - ps: (Get-Content hummprestashop\config.xml).replace("humm_plugin_version_placeholder", $env:APPVEYOR_REPO_TAG_NAME ) | Set-Content hummprestashop\config.xml
-  - ps: (Get-Content hummprestashop\hummprestashop.php).replace("humm_plugin_version_placeholder", $env:APPVEYOR_REPO_TAG_NAME ) | Set-Content hummprestashop\hummprestashop.php
+  - ps: (Get-Content hummprestashop\common\HummCommon.php).replace("humm_plugin_version_placeholder", $env:APPVEYOR_REPO_TAG_NAME ) | Set-Content hummprestashop\common\HummCommon.php
 build_script:
   - ps: Invoke-Expression "7z a $env:release_name hummprestashop"
 artifacts:
