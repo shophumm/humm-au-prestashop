@@ -52,3 +52,13 @@ body.hummloading {
 body.hummloading .hummmodal {
     display: block;
 }
+
+p.payment_module a.humm {
+    background: url(../../images/humm.png) 12px 36px no-repeat #fbfbfb;
+    background-size: 74px;
+}
+
+p.payment_module a.oxipay {
+    background: url(../../images/oxipay.png) 12px 36px no-repeat #fbfbfb;
+    background-size: 74px;
+}

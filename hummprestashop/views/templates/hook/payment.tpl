@@ -26,14 +26,14 @@
     <div class="col-xs-12">
         <p class="payment_module" id="hummprestashop_payment_button">
             {if $humm_validation_errors }
-                <a href="#" onclick="return false;">
+                <a class="{$humm_logo}" href="#" onclick="return false;">
                     <img src="{$this_path_ssl}images/{$humm_logo}.png" style="width: 120px;margin-right: 10px;"/>
                     {$humm_validation_errors}
                 </a>
             {else}
-                <a class="humm" href="{$link->getModuleLink('hummprestashop', 'redirect', array(), true)|escape:'htmlall':'UTF-8'}"
+                <a class="{$humm_logo}"
+                   href="{$link->getModuleLink('hummprestashop', 'redirect', array(), true)|escape:'htmlall':'UTF-8'}"
                    title="Pay by Humm">
-                    <img src="{$this_path_ssl}images/{$humm_logo}.png" style="width: 120px;margin-right: 10px;"/>
                     {$humm_title}
                     <span>({$humm_description})</span>
                 </a>
