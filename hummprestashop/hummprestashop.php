@@ -381,11 +381,11 @@ class Hummprestashop extends PaymentModule {
         $countryCode   = Configuration::get( 'HUMM_COUNTRY' );
 
         if ( $billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[ $countryCode ] ) {
-            return "Humm doesn't support purchases from outside " . ( $countryNames[ $countryCode ] ) . ".";
+            return " doesn't support purchases from outside " . ( $countryNames[ $countryCode ] ) . ".";
         }
 
         if ( $shippingCountryIsoCode != $countryCode ) {
-            return "Humm doesn't support purchases shipped outside " . ( $countryNames[ $countryCode ] ) . ".";
+            return " doesn't support purchases shipped outside " . ( $countryNames[ $countryCode ] ) . ".";
         }
 
         return "";

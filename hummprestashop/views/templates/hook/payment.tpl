@@ -27,8 +27,7 @@
         <p class="payment_module" id="hummprestashop_payment_button">
             {if $humm_validation_errors }
                 <a class="{$humm_logo}" href="#" onclick="return false;">
-                    <img src="{$this_path_ssl}images/{$humm_logo}.png" style="width: 120px;margin-right: 10px;"/>
-                    {$humm_validation_errors}
+                    {$humm_title} {$humm_validation_errors}
                 </a>
             {else}
                 <a class="{$humm_logo}"
