@@ -74,7 +74,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_shipping_zip'      => $address_shipping->postcode,
             'x_customer_shipping_country'  => $country_shipping->iso_code,
             'x_test'                       => 'false',
-            'version_info'                 => 'plugin_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr( _PS_VERSION_, 0, 3 )
+            'version_info'                 => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS' . substr( _PS_VERSION_, 0, 3 )
         );
         $signature            = HummCommon::generateSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
         $query['x_signature'] = $signature;
