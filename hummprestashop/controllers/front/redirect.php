@@ -101,7 +101,15 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $title       = Configuration::get( 'HUMM_TITLE' );
         $countryCode = Configuration::get( 'HUMM_COUNTRY' );
         $isTest      = Configuration::get( 'HUMM_TEST' );
-        $gatewayUrl  = 'https://' . ( $isTest ? 'securesandbox' : 'secure' ) . ( $title == 'Oxipay' ? '.oxipay' : '.shophumm' ) . ( $countryCode == 'NZ' ? '.co.nz' : '.com.au' ) . '/Checkout?platform=Default';
+        $domainsTest = array(
+            'Humm'   => 'test3-cart.shophumm',
+            'Oxipay' => 'securesandbox.oxipay'
+        );
+        $domains     = array(
+            'Humm'   => 'cart.shophumm',
+            'Oxipay' => 'secure.oxipay'
+        );
+        $gatewayUrl  = 'https://' . ( $isTest ? $domainsTest[ $title ] : $domains[ $title ] ) . ( $countryCode == 'NZ' ? '.co.nz' : '.com.au' ) . '/Checkout?platform=Default';
 
         return $gatewayUrl;
     }
