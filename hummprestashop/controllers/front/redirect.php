@@ -39,13 +39,13 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         //     return $this->displayError('An error occurred while trying to redirect the customer');
         // } else {...
 
-        $cart             = $this->context->cart;
-        $customer         = new Customer( $cart->id_customer );
-        $address_billing  = new Address( $cart->id_address_invoice );
-        $address_shipping = new Address( $cart->id_address_delivery );
-        $country_billing  = new Country( $address_shipping->id_country );
-        $country_shipping = new Country( $address_shipping->id_country );
-        // $customerPhone = $address_billing->$phone_mobile?$address_billing->$phone_mobile:($address_billing->$phone?$address_billing->$phone:'');
+        $cart                 = $this->context->cart;
+        $customer             = new Customer( $cart->id_customer );
+        $address_billing      = new Address( $cart->id_address_invoice );
+        $address_shipping     = new Address( $cart->id_address_delivery );
+        $country_billing      = new Country( $address_shipping->id_country );
+        $country_shipping     = new Country( $address_shipping->id_country );
+        $customerPhone        = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
         $query                = array(
             'x_currency'                   => $this->context->currency->iso_code,
             'x_url_callback'               => $this->context->link->getModuleLink( 'hummprestashop', 'confirmation' ),
@@ -60,7 +60,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_first_name'        => $customer->firstname,
             'x_customer_last_name'         => $customer->lastname,
             'x_customer_email'             => $customer->email,
-            // 'x_customer_phone' => $customerPhone,
+            'x_customer_phone'             => $customerPhone,
             'x_customer_billing_address1'  => $address_billing->address1,
             'x_customer_billing_address2'  => $address_billing->address2,
             'x_customer_billing_city'      => $address_billing->city,
