@@ -237,7 +237,7 @@ class Hummprestashop extends PaymentModule {
                     ),
                     array(
                         'type'   => 'text',
-                        'label'  => $this->l( 'Humm Gateway URL' ),
+                        'label'  => $this->l( 'Gateway URL' ),
                         'prefix' => '<i class="icon icon-globe"></i>',
                         'name'   => 'HUMM_GATEWAY_URL',
                         'desc'   => $this->l( 'This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.' )
