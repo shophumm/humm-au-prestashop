@@ -46,9 +46,9 @@ class Hummprestashop extends PaymentModule {
         parent::__construct();
 
         $this->displayName = $this->l( 'Humm prestashop' );
-        $this->description = $this->l( 'Accept payments for your products via Humm.' );
+        $this->description = $this->l( 'Accept payments for your products via humm.' );
 
-        $this->confirmUninstall = $this->l( 'Are you sure you want to uninstall the Humm module?' );
+        $this->confirmUninstall = $this->l( 'Are you sure you want to uninstall the humm module?' );
 
         $this->limited_countries  = array( 'AU', 'NZ' );
         $this->limited_currencies = array( 'AUD', 'NZD' );
@@ -70,7 +70,7 @@ class Hummprestashop extends PaymentModule {
 
         //Default values
         Configuration::updateValue( 'HUMM_TITLE', 'Humm' );
-        Configuration::updateValue( 'HUMM_DESCRIPTION', 'Breathe easy with Humm, an interest-free installment payment plan.' );
+        Configuration::updateValue( 'HUMM_DESCRIPTION', 'Breathe easy with humm, an interest-free installment payment plan.' );
 
         return parent::install() &&
                $this->registerHook( 'header' ) &&
@@ -247,7 +247,7 @@ class Hummprestashop extends PaymentModule {
                         'label'    => $this->l( 'Merchant ID' ),
                         'prefix'   => '<i class="icon icon-user"></i>',
                         'name'     => 'HUMM_MERCHANT_ID',
-                        'desc'     => $this->l( 'This is the unique number that identifies you as a merchant to the Humm Payment Gateway.' ),
+                        'desc'     => $this->l( 'This is the unique number that identifies you as a merchant to the humm Payment Gateway.' ),
                         'required' => true
                     ),
                     array(

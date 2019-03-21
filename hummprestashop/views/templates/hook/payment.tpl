@@ -32,7 +32,7 @@
             {else}
                 <a class="{$humm_logo}"
                    href="{$link->getModuleLink('hummprestashop', 'redirect', array(), true)|escape:'htmlall':'UTF-8'}"
-                   title="Pay by Humm">
+                   title="Pay by humm">
                     {$humm_title}
                     <span>({$humm_description})</span>
                 </a>
