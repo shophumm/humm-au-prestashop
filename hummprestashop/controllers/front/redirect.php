@@ -102,7 +102,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $countryCode = Configuration::get( 'HUMM_COUNTRY' );
         $isTest      = Configuration::get( 'HUMM_TEST' );
         $domainsTest = array(
-            'Humm'   => 'test3-cart.shophumm',
+            'Humm'   => 'integration-cart.shophumm',
             'Oxipay' => 'securesandbox.oxipay'
         );
         $domains     = array(
