@@ -339,7 +339,7 @@ class Hummprestashop extends PaymentModule {
 
         $descriptions = array(
             'Oxipay' => 'Breathe easy with Oxipay, an interest-free installment payment plan.',
-            'Humm'   => 'Streeetch your payments.'
+            'Humm'   => 'Pay in slices. No interest ever.'
         );
 
         $this->smarty->assign( array(
