@@ -2,3 +2,9 @@
 # The following files contain your database credentials and other personal data.
 
 \.idea/
+*
+!.gitignore
+!appveyor.yml
+!LICENSE
+!README.md
+!hummprestashop/
