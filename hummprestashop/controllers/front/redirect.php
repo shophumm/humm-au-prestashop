@@ -87,12 +87,25 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
                 'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
                 'this_path'     => $this->module->getPathUri(),
                 'this_path_bw'  => $this->module->getPathUri(),
-                'form_query'    => $this->generate_processing_form( Configuration::get( 'HUMM_GATEWAY_URL' ), $query ),
+                'form_query'    => $this->generate_processing_form( $this->getGatewayUrl(), $query ),
                 'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
             )
         );
 
         $this->setTemplate( 'module:hummprestashop/views/templates/front/redirect.tpl' );
+    }
+
+    protected function getGatewayUrl() {
+        $gatewayUrl = Configuration::get( 'HUMM_GATEWAY_URL' );
+        if ( strtolower( substr( $gatewayUrl, 0, 4 ) ) == 'http' ) {
+            return $gatewayUrl;
+        }
+        $title       = Configuration::get( 'HUMM_TITLE' );
+        $countryCode = Configuration::get( 'HUMM_COUNTRY' );
+        $isTest      = Configuration::get( 'HUMM_TEST' );
+        $gatewayUrl  = 'https://' . ( $isTest ? 'securesandbox' : 'secure' ) . ( $title == 'Oxipay' ? '.oxipay' : '.shophumm' ) . ( $countryCode == 'NZ' ? '.co.nz' : '.com.au' ) . '/Checkout?platform=Default';
+
+        return $gatewayUrl;
     }
 
     protected function displayError( $message, $description = false ) {
@@ -127,5 +140,4 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
 
         return $html;
     }
-
 }

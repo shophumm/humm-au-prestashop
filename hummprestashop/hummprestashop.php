@@ -72,7 +72,6 @@ class Hummprestashop extends PaymentModule {
 
         //Default values
         Configuration::updateValue( 'HUMM_TITLE', 'Humm' );
-        Configuration::updateValue( 'HUMM_DESCRIPTION', 'Breathe easy with Humm, an interest-free installment payment plan.' );
 
         return parent::install() &&
                $this->registerHook( 'header' ) &&
@@ -83,11 +82,11 @@ class Hummprestashop extends PaymentModule {
 
     public function uninstall() {
         Configuration::deleteByName( 'HUMM_TITLE' );
-        Configuration::deleteByName( 'HUMM_DESCRIPTION' );
+        Configuration::deleteByName( 'HUMM_COUNTRY' );
+        Configuration::deleteByName( 'HUMM_TEST' );
         Configuration::deleteByName( 'HUMM_GATEWAY_URL' );
         Configuration::deleteByName( 'HUMM_MERCHANT_ID' );
         Configuration::deleteByName( 'HUMM_API_KEY' );
-        Configuration::deleteByName( 'HUMM_LOGO' );
 
         return parent::uninstall();
     }
@@ -99,10 +98,10 @@ class Hummprestashop extends PaymentModule {
         $postErrors = array();
         if ( ( (bool) Tools::isSubmit( 'submitHummprestashopModule' ) ) == true ) {
             if ( ! Tools::getValue( 'HUMM_TITLE' ) ) {
-                $postErrors[] = $this->l( 'Title is required.' );
+                $postErrors[] = $this->l( 'Checkout Method is required.' );
             }
-            if ( ! Tools::getValue( 'HUMM_DESCRIPTION' ) ) {
-                $postErrors[] = $this->l( 'Description is required.' );
+            if ( is_null( Tools::getValue( 'HUMM_TEST' ) ) ) {
+                $postErrors[] = $this->l( 'Is Test? is required.' );
             }
             if ( ! Tools::getValue( 'HUMM_MERCHANT_ID' ) ) {
                 $postErrors[] = $this->l( 'Merchant ID is required.' );
@@ -110,9 +109,6 @@ class Hummprestashop extends PaymentModule {
             if ( ! Tools::getValue( 'HUMM_API_KEY' ) && ! Configuration::get( 'HUMM_API_KEY' ) ) //read comment in postProcess() about the particularity of 'password' type input fields
             {
                 $postErrors[] = $this->l( 'API Key is required.' );
-            }
-            if ( ! Tools::getValue( 'HUMM_GATEWAY_URL' ) ) {
-                $postErrors[] = $this->l( 'Humm Gateway URL is required' );
             }
         }
 
@@ -197,34 +193,53 @@ class Hummprestashop extends PaymentModule {
                 ),
                 'input'  => array(
                     array(
-                        'type'     => 'text',
-                        'label'    => $this->l( 'Title' ),
+                        'type'     => 'select',
+                        'label'    => $this->l( 'Checkout Method' ),
                         'name'     => 'HUMM_TITLE',
-                        'desc'     => $this->l( 'This controls the title which the user sees during checkout.' ),
-                        'required' => true
+                        'required' => true,
+                        'options'  => array(
+                            'query' => array(
+                                array( 'id' => 'Oxipay', 'name' => 'Oxipay' ),
+                                array( 'id' => 'Humm', 'name' => 'Humm' ),
+                            ),
+                            'id'    => 'id',
+                            'name'  => 'name',
+                        ),
                     ),
                     array(
-                        'type'       => 'file',
-                        'label'      => $this->l( 'Logo' ),
-                        'name'       => 'HUMM_LOGO',
-                        'image'      => Configuration::get( 'HUMM_LOGO' ) ? '<img src="' . $this->_path . '/images/' . Configuration::get( 'HUMM_LOGO' ) . '" alt="' . $this->l( 'Logo' ) . '" title="' . $this->l( 'Logo' ) . '" />' : null,
-                        'delete_url' => defined( 'PS_ADMIN_DIR' ) ? 'index.php?controller=AdminModules&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name . '&delete_logo=1&token=' . Tools::getAdminToken( 'AdminModules' . (int) ( Tab::getIdFromClassName( 'AdminModules' ) ) . (int) $this->context->employee->id ) : ''
+                        'type'     => 'select',
+                        'label'    => $this->l( 'Country' ),
+                        'name'     => 'HUMM_COUNTRY',
+                        'required' => true,
+                        'options'  => array(
+                            'query' => array(
+                                array( 'id' => 'AU', 'name' => 'Australia' ),
+                                array( 'id' => 'NZ', 'name' => 'New Zealand' ),
+                            ),
+                            'id'    => 'id',
+                            'name'  => 'name',
+                        ),
                     ),
                     array(
-                        'type'     => 'text',
-                        'label'    => $this->l( 'Description' ),
-                        'prefix'   => '<i class="icon icon-comment-alt"></i>',
-                        'name'     => 'HUMM_DESCRIPTION',
-                        'desc'     => $this->l( 'This controls the description which the user sees during checkout.' ),
-                        'required' => true
+                        'type'     => 'select',
+                        'label'    => $this->l( 'Is Test?' ),
+                        'name'     => 'HUMM_TEST',
+                        'required' => true,
+                        'options'  => array(
+                            'query' => array(
+                                array( 'id' => '1', 'name' => 'Yes' ),
+                                array( 'id' => '0', 'name' => 'No' ),
+                            ),
+                            'id'    => 'id',
+                            'name'  => 'name',
+                        ),
                     ),
                     array(
-                        'type'     => 'text',
-                        'label'    => $this->l( 'Humm Gateway URL' ),
-                        'prefix'   => '<i class="icon icon-globe"></i>',
-                        'name'     => 'HUMM_GATEWAY_URL',
-                        'desc'     => $this->l( 'This is the base URL of the Humm payment sevices. Do not change this unless directed to by Humm staff.' ),
-                        'required' => true
+                        'type'   => 'text',
+                        'label'  => $this->l( 'Humm Gateway URL' ),
+                        'prefix' => '<i class="icon icon-globe"></i>',
+                        'name'   => 'HUMM_GATEWAY_URL',
+                        'desc'   => $this->l( 'This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.' )
                     ),
                     array(
                         'type'     => 'text',
@@ -256,8 +271,8 @@ class Hummprestashop extends PaymentModule {
     protected function getConfigFormValues() {
         return array(
             'HUMM_TITLE'       => Configuration::get( 'HUMM_TITLE' ),
-            'HUMM_LOGO'        => Configuration::get( 'HUMM_LOGO' ),
-            'HUMM_DESCRIPTION' => Configuration::get( 'HUMM_DESCRIPTION' ),
+            'HUMM_COUNTRY'     => Configuration::get( 'HUMM_COUNTRY' ),
+            'HUMM_TEST'        => Configuration::get( 'HUMM_TEST' ),
             'HUMM_GATEWAY_URL' => Configuration::get( 'HUMM_GATEWAY_URL' ),
             'HUMM_MERCHANT_ID' => Configuration::get( 'HUMM_MERCHANT_ID' ),
             'HUMM_API_KEY'     => Configuration::get( 'HUMM_API_KEY' ),
@@ -268,13 +283,10 @@ class Hummprestashop extends PaymentModule {
      * Save form data.
      */
     protected function postProcess() {
-        //custom logo image upload processing (if necessary)
-        //HUMM_LOGO config property is updated here
-        $this->processCustomHummLogoUpload();
-
         //save the values for the rest of the configuration properties
         Configuration::updateValue( 'HUMM_TITLE', Tools::getValue( 'HUMM_TITLE' ) );
-        Configuration::updateValue( 'HUMM_DESCRIPTION', Tools::getValue( 'HUMM_DESCRIPTION' ) );
+        Configuration::updateValue( 'HUMM_COUNTRY', Tools::getValue( 'HUMM_COUNTRY' ) );
+        Configuration::updateValue( 'HUMM_TEST', Tools::getValue( 'HUMM_TEST' ) );
         Configuration::updateValue( 'HUMM_GATEWAY_URL', Tools::getValue( 'HUMM_GATEWAY_URL' ) );
         Configuration::updateValue( 'HUMM_MERCHANT_ID', Tools::getValue( 'HUMM_MERCHANT_ID' ) );
         $apiKey = strval( Tools::getValue( 'HUMM_API_KEY' ) );
@@ -326,12 +338,21 @@ class Hummprestashop extends PaymentModule {
             return false;
         }
 
+        $descriptions = array(
+            'Oxipay' => 'Breathe easy with Oxipay, an interest-free installment payment plan.',
+            'Humm'   => 'Pay in slices. No interest ever.'
+        );
+
+        $this->smarty->assign( array(
+            'description' => $descriptions[ Configuration::get( 'HUMM_TITLE' ) ],
+        ) );
+
         $newOption = new PaymentOption();
         $newOption->setModuleName( $this->name );
-        $newOption->setCallToActionText( $this->trans( 'Pay by Humm', array(), 'Modules.Hummprestashop.Admin' ) );
+        $newOption->setCallToActionText( $this->trans( 'Pay by ' . Configuration::get( 'HUMM_TITLE' ), array(), 'Modules.Hummprestashop.Admin' ) );
         $newOption->setAction( $this->context->link->getModuleLink( $this->name, 'redirect', array(), true ) );
         $newOption->setAdditionalInformation( $this->fetch( $this->local_path . 'views/templates/hook/payment.tpl' ) );
-        $newOption->setLogo( Media::getMediaPath( $this->local_path . 'images/humm-small.png' ) );
+        $newOption->setLogo( Media::getMediaPath( $this->local_path . 'images/' . strtolower( Configuration::get( 'HUMM_TITLE' ) ) . '-small.png' ) );
 
         return [ $newOption ];
     }
@@ -353,6 +374,7 @@ class Hummprestashop extends PaymentModule {
         if ( $order->getCurrentOrderState()->id != Configuration::get( 'PS_OS_ERROR' ) ) {
             $this->smarty->assign( 'status', 'ok' );
         }
+
 
         $total = Tools::displayPrice( $params['order']->getOrdersTotalPaid(), new Currency( $params['order']->id_currency ), false );
         $this->smarty->assign( array(
@@ -393,72 +415,34 @@ class Hummprestashop extends PaymentModule {
         $shippingAddress = new Address( (int) $cart->id_address_delivery );
         $billingAddress  = new Address( (int) $cart->id_address_invoice );
         $currency        = new Currency( (int) $cart->id_currency );
+        $title           = Configuration::get( 'HUMM_TITLE' );
 
         $billingCountryIsoCode  = ( new Country( $billingAddress->id_country ) )->iso_code;
         $shippingCountryIsoCode = ( new Country( $shippingAddress->id_country ) )->iso_code;
         $currencyIsoCode        = $currency->iso_code;
 
-        if ( $cart->getOrderTotal() < 20 ) {
-            return "Humm doesn't support purchases less than $20.";
+        if ( $cart->getOrderTotal() < 20 && $title == 'Oxipay' ) {
+            return "Oxipay doesn't support purchases less than $20.";
         }
 
-        try {
-            $countryInfo = HummCommon::getCountryInfoFromGatewayUrl();
-        } catch ( Exception $exception ) {
-            return $exception->getMessage();
-        }
-        if ( $billingCountryIsoCode != $countryInfo['countryCode'] || $currencyIsoCode != $countryInfo['currencyCode'] ) {
-            return "Humm doesn't support purchases from outside " . ( $countryInfo['countryName'] ) . ".";
+        $countryNames  = array(
+            'AU' => 'Australia',
+            'NZ' => 'New Zealand'
+        );
+        $currencyCodes = array(
+            'AU' => 'AUD',
+            'NZ' => 'NZD'
+        );
+        $countryCode   = Configuration::get( 'HUMM_COUNTRY' );
+
+        if ( $billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[ $countryCode ] ) {
+            return "Humm doesn't support purchases from outside " . ( $countryNames[ $countryCode ] ) . ".";
         }
 
-        if ( $shippingCountryIsoCode != $countryInfo['countryCode'] ) {
-            return "Humm doesn't support purchases shipped outside " . ( $countryInfo['countryName'] ) . ".";
+        if ( $shippingCountryIsoCode != $countryCode ) {
+            return "Humm doesn't support purchases shipped outside " . ( $countryNames[ $countryCode ] ) . ".";
         }
 
         return "";
-    }
-
-
-    private function processCustomHummLogoUpload() {
-        $logoKey = 'HUMM_LOGO';
-        $errors  = null;
-        if ( isset( $_FILES[ $logoKey ]['tmp_name'] ) && isset( $_FILES[ $logoKey ]['name'] ) && $_FILES[ $logoKey ]['name'] ) {
-            $salt      = sha1( microtime() );
-            $type      = Tools::strtolower( Tools::substr( strrchr( $_FILES[ $logoKey ]['name'], '.' ), 1 ) );
-            $imageName = $salt . '.' . $type;
-            $fileName  = dirname( __FILE__ ) . '/images/' . $imageName;
-            if ( file_exists( $fileName ) ) {
-                $errors[] = $this->l( 'Logo already exists. Try to rename the file then reupload' );
-            } else {
-                $imagesize = @getimagesize( $_FILES[ $logoKey ]['tmp_name'] );
-
-                if ( ! $errors && isset( $_FILES[ $logoKey ] ) &&
-                     ! empty( $_FILES[ $logoKey ]['tmp_name'] ) &&
-                     ! empty( $imagesize ) &&
-                     in_array( $type, array( 'jpg', 'gif', 'jpeg', 'png' ) )
-                ) {
-                    $temp_name = tempnam( _PS_TMP_IMG_DIR_, 'PS' );
-                    if ( $error = ImageManager::validateUpload( $_FILES[ $logoKey ] ) ) {
-                        $errors[] = $error;
-                    } elseif ( ! $temp_name || ! move_uploaded_file( $_FILES[ $logoKey ]['tmp_name'], $temp_name ) ) {
-                        $errors[] = $this->l( 'Can not upload the file' );
-                    } elseif ( ! ImageManager::resize( $temp_name, $fileName, null, null, $type ) ) {
-                        $errors[] = $this->displayError( $this->l( 'An error occurred during the image upload process.' ) );
-                    }
-                    if ( isset( $temp_name ) ) {
-                        @unlink( $temp_name );
-                    }
-                    if ( ! $errors ) {
-                        if ( Configuration::get( $logoKey ) != '' ) {
-                            $oldImage = dirname( __FILE__ ) . '/images/' . Configuration::get( $logoKey );
-                            if ( file_exists( $oldImage ) ) {
-                                @unlink( $oldImage );
-                            }
-                        }
-                        Configuration::updateValue( $logoKey, $imageName, true );
-                    }
-                }
-            }
-        }
     }
 }

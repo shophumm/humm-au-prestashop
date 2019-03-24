@@ -29,11 +29,7 @@
                 {$humm_validation_errors}
             {else}
                 <span>
-					{if isset($humm_description) && $humm_description}
-                        {$humm_description}
-                    {else}
-                        {l s='Breathe easy with Humm, an interest-free installment payment plan' mod='hummprestashop'}
-                    {/if}
+                    {$description}
 				</span>
             {/if}
         </p>
