@@ -22,7 +22,7 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-{* This can be used to create a header for the config form, maybe with Humm logo and description *}
+{* This can be used to create a header for the config form, maybe with humm logo and description *}
 {*
 <div class="panel">
 	<div class="row hummprestashop-header">

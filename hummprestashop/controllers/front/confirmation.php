@@ -49,7 +49,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
 
         if ( ! $isValid ) {
             PrestaShopLogger::addLog( 'Possible site forgery detected: invalid response signature.', 1 );
-            $this->errors[] = $this->module->l( 'An error occured with the Humm payment. Please contact the merchant to have more informations' );
+            $this->errors[] = $this->module->l( 'An error occured with the humm payment. Please contact the merchant to have more informations' );
             $link           = $this->context->link->getPageLink( 'order', true, null, "step=3" );
             $this->context->smarty->assign( 'checkout_link', $link );
             $this->context->smarty->assign( 'errors', $this->errors );
@@ -125,7 +125,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             /**
              * An error occured and is shown on a new page.
              */
-            $this->errors[] = $this->module->l( 'Payment has been declined by provider Humm' );
+            $this->errors[] = $this->module->l( 'Payment has been declined by provider humm' );
             $link           = $this->context->link->getPageLink( 'order', true, null, "step=3" );
             $this->context->smarty->assign( 'checkout_link', $link );
             $this->context->smarty->assign( 'errors', $this->errors );
