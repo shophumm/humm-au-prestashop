@@ -366,8 +366,8 @@ class Hummprestashop extends PaymentModule {
         $shippingCountryIsoCode = ( new Country( $shippingAddress->id_country ) )->iso_code;
         $currencyIsoCode        = $currency->iso_code;
 
-        if ( $cart->getOrderTotal() < 20 ) {
-            return "Humm doesn't support purchases less than $20.";
+        if ( $cart->getOrderTotal() < 20 && Configuration::get( 'HUMM_TITLE' ) == 'Oxipay' ) {
+            return " doesn't support purchases less than $20.";
         }
 
         $countryNames  = array(
