@@ -36,7 +36,7 @@ class Hummprestashop extends PaymentModule {
     public function __construct() {
         $this->name          = 'hummprestashop';
         $this->tab           = 'payments_gateways';
-        $this->version       = 'humm_plugin_version_placeholder';
+        $this->version       = HummCommon::HUMM_PLUGIN_VERSION;
         $this->author        = 'Humm';
         $this->need_instance = 0;
 
