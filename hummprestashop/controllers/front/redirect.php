@@ -47,6 +47,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $country_shipping = new Country( $address_shipping->id_country );
         $state_billing    = new State( $address_billing->id_state );
         $state_shipping   = new State( $address_shipping->id_state );
+        $customerPhone    = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
 
         $query                = array(
             'x_currency'                   => $this->context->currency->iso_code,
@@ -62,7 +63,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_first_name'        => $customer->firstname,
             'x_customer_last_name'         => $customer->lastname,
             'x_customer_email'             => $customer->email,
-            'x_customer_phone'             => $address_shipping->phone,
+            'x_customer_phone'             => $customerPhone,
             'x_customer_billing_address1'  => $address_billing->address1,
             'x_customer_billing_address2'  => $address_billing->address2,
             'x_customer_billing_city'      => $address_billing->city,
