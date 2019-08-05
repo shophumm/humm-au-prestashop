@@ -26,7 +26,6 @@
 
 require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
 
-
 class HummprestashopConfirmationModuleFrontController extends ModuleFrontController {
     public function postProcess() {
         $scheme = ( ! empty( $_SERVER['HTTPS'] ) )? 'https' : 'http';
@@ -45,7 +44,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
 
         if ( ! $isValid ) {
             PrestaShopLogger::addLog( 'Possible site forgery detected: invalid response signature.', 1 );
-            $this->errors[] = $this->module->l( 'An error occured with the humm payment. Please contact the merchant to have more informations' );
+            $this->errors[] = $this->module->l( 'An error occured with the humm payment. Please contact the merchant to have more information' );
 
             return $this->setTemplate( 'error.tpl' );
         }
