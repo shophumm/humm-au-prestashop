@@ -24,7 +24,6 @@
 *}
 
 <div class="hummmodal">
-
     {capture name=path}
         <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}"
            title="{l s='Go back to the Checkout' mod='hummprestashop'}">{l s='Checkout' mod='hummprestashop'}</a>

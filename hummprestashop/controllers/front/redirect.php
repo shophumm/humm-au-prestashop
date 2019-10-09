@@ -45,6 +45,8 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $address_shipping     = new Address( $cart->id_address_delivery );
         $country_billing      = new Country( $address_shipping->id_country );
         $country_shipping     = new Country( $address_shipping->id_country );
+        $state_billing        = new State( $address_billing->id_state );
+        $state_shipping       = new State( $address_shipping->id_state );
         $customerPhone        = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
         $query                = array(
             'x_currency'                   => $this->context->currency->iso_code,
@@ -64,17 +66,17 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_customer_billing_address1'  => $address_billing->address1,
             'x_customer_billing_address2'  => $address_billing->address2,
             'x_customer_billing_city'      => $address_billing->city,
-            'x_customer_billing_state'     => 'ACT',
+            'x_customer_billing_state'     => $state_billing->name,
             'x_customer_billing_zip'       => $address_billing->postcode,
             'x_customer_billing_country'   => $country_billing->iso_code,
             'x_customer_shipping_address1' => $address_shipping->address1,
             'x_customer_shipping_address2' => $address_shipping->address2,
             'x_customer_shipping_city'     => $address_shipping->city,
-            'x_customer_shipping_state'    => '',
+            'x_customer_shipping_state'    => $state_shipping->name,
             'x_customer_shipping_zip'      => $address_shipping->postcode,
             'x_customer_shipping_country'  => $country_shipping->iso_code,
             'x_test'                       => 'false',
-            'version_info'                 => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS' . substr( _PS_VERSION_, 0, 3 )
+            'version_info'                 => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr( _PS_VERSION_, 0, 3 )
         );
         $signature            = HummCommon::generateSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
         $query['x_signature'] = $signature;

@@ -2,6 +2,7 @@
 
 class HummCommon {
     const HUMM_PLUGIN_VERSION = 'humm_plugin_version_placeholder';
+
     /**
      * validates and associative array that contains a hmac signature against an api key
      *
