@@ -39,16 +39,15 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         //     return $this->displayError('An error occurred while trying to redirect the customer');
         // } else {...
 
-        $cart             = $this->context->cart;
-        $customer         = new Customer( $cart->id_customer );
-        $address_billing  = new Address( $cart->id_address_invoice );
-        $address_shipping = new Address( $cart->id_address_delivery );
-        $country_billing  = new Country( $address_shipping->id_country );
-        $country_shipping = new Country( $address_shipping->id_country );
-        $state_billing    = new State( $address_billing->id_state );
-        $state_shipping   = new State( $address_shipping->id_state );
-        $customerPhone    = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
-
+        $cart                 = $this->context->cart;
+        $customer             = new Customer( $cart->id_customer );
+        $address_billing      = new Address( $cart->id_address_invoice );
+        $address_shipping     = new Address( $cart->id_address_delivery );
+        $country_billing      = new Country( $address_shipping->id_country );
+        $country_shipping     = new Country( $address_shipping->id_country );
+        $state_billing        = new State( $address_billing->id_state );
+        $state_shipping       = new State( $address_shipping->id_state );
+        $customerPhone        = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
         $query                = array(
             'x_currency'                   => $this->context->currency->iso_code,
             'x_url_callback'               => $this->context->link->getModuleLink( 'hummprestashop', 'confirmation' ),
@@ -83,16 +82,15 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $query['x_signature'] = $signature;
 
         $this->context->smarty->assign( array(
-                'nbProducts'    => $cart->nbProducts(),
-                'cust_currency' => $cart->id_currency,
-                'currencies'    => $this->module->getCurrency( (int) $cart->id_currency ),
-                'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
-                'this_path'     => $this->module->getPathUri(),
-                'this_path_bw'  => $this->module->getPathUri(),
-                'form_query'    => $this->generate_processing_form( $this->getGatewayUrl(), $query ),
-                'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
-            )
-        );
+            'nbProducts'    => $cart->nbProducts(),
+            'cust_currency' => $cart->id_currency,
+            'currencies'    => $this->module->getCurrency( (int) $cart->id_currency ),
+            'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
+            'this_path'     => $this->module->getPathUri(),
+            'this_path_bw'  => $this->module->getPathUri(),
+            'form_query'    => $this->generate_processing_form( $this->getGatewayUrl(), $query ),
+            'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
+        ) );
 
         $this->setTemplate( 'module:hummprestashop/views/templates/front/redirect.tpl' );
     }
@@ -105,7 +103,6 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $title       = Configuration::get( 'HUMM_TITLE' );
         $countryCode = Configuration::get( 'HUMM_COUNTRY' );
         $isTest      = Configuration::get( 'HUMM_TEST' );
-
         $domainsTest = array(
             'Humm'   => 'integration-cart.shophumm',
             'Oxipay' => 'securesandbox.oxipay'

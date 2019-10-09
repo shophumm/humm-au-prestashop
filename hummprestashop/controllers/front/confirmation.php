@@ -50,7 +50,6 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             $this->context->smarty->assign( 'errors', $this->errors );
 
             return $this->setTemplate( 'module:hummprestashop/views/templates/front/error.tpl' );
-
         }
 
         $transactionId = Tools::getValue( "x_gateway_reference" );
@@ -62,7 +61,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
         $payment_status = Configuration::get( 'PS_OS_PAYMENT' ); // Default value for a payment that succeed.
 
         //We are not using a second script to be used by the Payment Gateway to issue the async callback
-        //to notify us to validate the order remotely (i.e. validation.php). We are using this
+        //to notify us to validate the order remotely (i.e. validation.php). We are using this 
         //confirmation.php script for both uses (user browser redirection validation and remote async 
         //callback validation). For this reason, if the async callback has been already issued, this
         //order is already in 'PS_OS_PAYMENT' and we don't need to 'validateOrder' again (as this would

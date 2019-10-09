@@ -30,7 +30,7 @@
             {else}
                 <span>
                     {$description}
-				</span>
+		</span>
             {/if}
         </p>
     </div>
