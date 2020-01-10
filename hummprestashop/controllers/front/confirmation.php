@@ -28,17 +28,22 @@ require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
 
 class HummprestashopConfirmationModuleFrontController extends ModuleFrontController {
     public function postProcess() {
-        $scheme = ( ! empty( $_SERVER['HTTPS'] ) )? 'https' : 'http';
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $query = $_POST;
+        }
+        elseif ($_SERVER['REQUEST_METHOD'] === 'GET') {
+            $scheme = ( ! empty( $_SERVER['HTTPS'] ) )? 'https' : 'http';
 
-        $full_url = sprintf(
-            '%s://%s%s',
-            $scheme,
-            $_SERVER['HTTP_HOST'],
-            $_SERVER['REQUEST_URI']
-        );
-
-        $parts    = parse_url( $full_url, PHP_URL_QUERY );
-        parse_str( $parts, $query );
+            $full_url = sprintf(
+                '%s://%s%s',
+                $scheme,
+                $_SERVER['HTTP_HOST'],
+                $_SERVER['REQUEST_URI']
+            );
+    
+            $parts    = parse_url( $full_url, PHP_URL_QUERY ); 
+            parse_str( $parts, $query );
+        }
 
         $isValid = HummCommon::isValidSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
 
