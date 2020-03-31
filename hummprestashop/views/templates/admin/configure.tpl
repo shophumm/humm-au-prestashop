@@ -23,10 +23,10 @@
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 {* This can be used to create a header for the config form, maybe with humm logo and description *}
-
+{*
 <div class="panel">
-	<div class="row hummprestashop-header ">
-		<img src="{$module_dir|escape:'html':'UTF-8'}views/img/bird-humm.svg" class="col-xs-6 col-md-4 text-center humm-payment-logo" id="payment-logo" />
+	<div class="row hummprestashop-header">
+		<img src="{$module_dir|escape:'html':'UTF-8'}views/img/humm_logo.png" class="col-xs-6 col-md-4 text-center" id="payment-logo" />
 		<div class="col-xs-6 col-md-4 text-center">
 			<h4>{l s='Online payment processing' mod='hummprestashop'}</h4>
 			<h4>{l s='Fast - Secure - Reliable' mod='hummprestashop'}</h4>
@@ -37,3 +37,4 @@
 		</div>
 	</div>
 </div>
+*}

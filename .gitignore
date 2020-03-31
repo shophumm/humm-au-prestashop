@@ -4,4 +4,5 @@
 !appveyor.yml
 !LICENSE
 !README.md
-!hummprestashop/
+!hummprestashop/*
+!hummprestashop/views/img/*
