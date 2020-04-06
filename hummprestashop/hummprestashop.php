@@ -219,6 +219,24 @@ class Hummprestashop extends PaymentModule
      */
     protected function getConfigForm()
     {
+        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
+        $minimumAmountField = $pre16 ?
+            array(
+                'type' => 'text',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'placeholder' => '0'
+            ) :
+            array(
+                'type' => 'html',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'size' => 32,
+                'required' => true,
+                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+            );
         return array(
             'form' => array(
                 'legend' => array(
@@ -254,10 +272,25 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
+                    $minimumAmountField,
                     array(
                         'type' => 'select',
                         'label' => $this->l('Is Test?'),
                         'name' => 'HUMM_TEST',
+                        'required' => true,
+                        'options' => array(
+                            'query' => array(
+                                array('id' => '1', 'name' => 'Yes'),
+                                array('id' => '0', 'name' => 'No'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('FORCE HUMM'),
+                        'name' => 'FORCE HUMM',
                         'required' => true,
                         'options' => array(
                             'query' => array(
@@ -275,6 +308,15 @@ class Hummprestashop extends PaymentModule
                         'name' => 'HUMM_GATEWAY_URL',
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
                     ),
+
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('MIN ORDER AMOUNT'),
+                        'prefix' => '<i class="icon icon-globe"></i>',
+                        'name' => 'MIN ORDER AMOUNT',
+                        'desc' => $this->l('MIN ORDER AMOUNT')
+                    ),
+
                     array(
                         'type' => 'text',
                         'label' => $this->l('Merchant ID'),
@@ -470,6 +512,7 @@ class Hummprestashop extends PaymentModule
             'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
             'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
             'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
+            'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
             'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
             'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
             'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
@@ -490,6 +533,7 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
         Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
         Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
+        Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
         Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
         Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
         Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
@@ -628,8 +672,9 @@ class Hummprestashop extends PaymentModule
         $shippingCountryIsoCode = (new Country($shippingAddress->id_country))->iso_code;
         $currencyIsoCode = $currency->iso_code;
 
-        if ($cart->getOrderTotal() < 20 && $title == 'Oxipay') {
-            return "Oxipay doesn't support purchases less than $20.";
+        if ($cart->getOrderTotal() < floatval(Tools::getAllValues('HUMM_MIN_VALUE'))) {
+
+            return "Humm doesn't support purchases less than $".Tools::getAllValues('HUMM_MIN_VALUE');
         }
 
         $countryNames = array(
