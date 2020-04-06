@@ -73,6 +73,28 @@ class Hummprestashop extends PaymentModule {
 
         //Default values
         Configuration::updateValue( 'HUMM_TITLE', 'Humm' );
+        if (version_compare(_PS_VERSION_, '1.5', '>=') &&
+            (
+                !$this->registerHook('displayHeader') ||
+                !$this->registerHook('displayTop') ||
+                !$this->registerHook('displayFooter')||
+                !$this->registerHook('displayProductButtons') ||
+                !$this->registerHook('displayProductPriceBlock') ||
+                !$this->registerHook('displayShoppingCartFooter')
+            )
+        ) {
+            return false;
+        }
+
+        if(version_compare(_PS_VERSION_, '1.7', '>=') &&
+            (
+                !$this->registerHook('displayBeforeBodyClosingTag') ||
+                !$this->registerHook('displayExpressCheckout') ||
+                !$this->registerHook('paymentOptions')
+            )
+        ){
+            return false;
+        }
 
         return parent::install() &&
                $this->registerHook( 'header' ) &&
@@ -304,10 +326,15 @@ class Hummprestashop extends PaymentModule {
      * Add the CSS & JavaScript files you want to be loaded in the BO.
      */
     public function hookBackOfficeHeader() {
+
         if ( Tools::getValue( 'module_name' ) == $this->name ) {
             $this->context->controller->addJS( $this->_path . 'views/js/back.js' );
             $this->context->controller->addCSS( $this->_path . 'views/css/back.css' );
         }
+    }
+    public function hookDisplayBackOfficeHeader()
+    {
+            $this->context->controller->addCSS($this->_path.'views/css/back.css', 'all');
     }
 
     /**
@@ -359,11 +386,9 @@ class Hummprestashop extends PaymentModule {
     }
 
     /**
-     * This hook is used to display the order confirmation page.
-     *
      * @param $params
-     *
-     * @return bool
+     * @return bool|string
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
      */
     public function hookPaymentReturn( $params ) {
         if ( $this->active == false ) {
