@@ -51,6 +51,7 @@ class Hummprestashop extends PaymentModule {
         $this->description = $this->l( 'Accept payments for your products via humm.' );
 
         $this->confirmUninstall = $this->l( 'Are you sure you want to uninstall the humm module?' );
+        $this->author ='Humm';
 
         $this->limited_countries  = array( 'AU', 'NZ' );
         $this->limited_currencies = array( 'AUD', 'NZD' );
