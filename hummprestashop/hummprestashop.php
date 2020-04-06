@@ -113,7 +113,10 @@ class Hummprestashop extends PaymentModule
         Configuration::deleteByName('HUMM_TEST');
         Configuration::deleteByName('HUMM_GATEWAY_URL');
         Configuration::deleteByName('HUMM_MERCHANT_ID');
-        Configuration::deleteByName('HUMM_API_KEY');
+        Configuration::deleteByName('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE');
+        Configuration::deleteByName('HUMM_DISPLAY_WIDGET_CARTPAGE');
+        Configuration::deleteByName('HUMM_DISPLAY_BANNER_CARTPAG');
+        Configuration::deleteByName('HUMM_DISPLAY_BANNER_HOMEPAGE');
 
         return parent::uninstall();
     }
@@ -208,7 +211,7 @@ class Hummprestashop extends PaymentModule
             'id_language' => $this->context->language->id,
         );
 
-        return $helper->generateForm(array($this->getConfigForm(),$this->getConfigWidgetForm()));
+        return $helper->generateForm(array($this->getConfigForm(), $this->getConfigWidgetForm()));
     }
 
     /**
@@ -289,9 +292,6 @@ class Hummprestashop extends PaymentModule
                         'required' => true
                     ),
                 ),
-                'submit' => array(
-                    'title' => $this->l('Save'),
-                ),
             ),
         );
     }
@@ -300,14 +300,15 @@ class Hummprestashop extends PaymentModule
     /**
      *
      */
-    protected function getConfigWidgetForm() {
+    protected function getConfigWidgetForm()
+    {
         $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
         $switch_type = $pre16 ? 'radio' : 'switch';
 
         $fields_form_customization = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->trans('Widgets', array(), 'Modules.WirePayment.Admin'),
+                    'title' => $this->trans('Widgets', array(), 'Modules.HummPayment.Admin'),
                     'icon' => 'icon-cogs'
                 ),
                 'input' => array(
@@ -319,7 +320,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Banner'),
-                        'name' => "zm_display_banner_homepage",
+                        'name' => "HUMM_DISPLAY_BANNER_HOMEPAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -344,7 +345,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Strip Banner'),
-                        'name' => "zm_display_banner_productpage",
+                        'name' => "HUMM_DISPLAY_BANNER_PRODUCTPAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -363,26 +364,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Widget'),
-                        'name' => "zm_display_widget_productpage",
-                        'is_bool' => true,
-                        'class' => 't',
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled'),
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled'),
-                            )
-                        ),
-                    ),
-                    array(
-                        'type' => $switch_type,
-                        'label' => $this->l('Display Tagline'),
-                        'name' => "zm_display_tagline_productpage",
+                        'name' => "HUMM_DISPLAY_WIDGET_PRODUCTPAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -406,7 +388,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Strip Banner'),
-                        'name' => "zm_display_banner_cartpage",
+                        'name' => "HUMM_DISPLAY_BANNER_CARTPAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -425,26 +407,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Widget'),
-                        'name' => "zm_display_widget_cartpage",
-                        'is_bool' => true,
-                        'class' => 't',
-                        'values' => array(
-                            array(
-                                'id' => 'active_on',
-                                'value' => true,
-                                'label' => $this->l('Enabled'),
-                            ),
-                            array(
-                                'id' => 'active_off',
-                                'value' => false,
-                                'label' => $this->l('Disabled'),
-                            )
-                        ),
-                    ),
-                    array(
-                        'type' => $switch_type,
-                        'label' => $this->l('Display Tagline'),
-                        'name' => "zm_display_tagline_cartpage",
+                        'name' => "HUMM_DISPLAYT_WIDGET_CARTPAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -468,7 +431,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => $switch_type,
                         'label' => $this->l('Display Strip Banner'),
-                        'name' => "zm_display_banner_categorypage",
+                        'name' => "HUMM_DIAPLAY_BANNER_CATEGORY_PAGE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -486,8 +449,10 @@ class Hummprestashop extends PaymentModule
                     ),
 
 
-
-                )
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                ),
             ),
         );
         return $fields_form_customization;
@@ -505,6 +470,10 @@ class Hummprestashop extends PaymentModule
             'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
             'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
             'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
+            'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
+            'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_HOMEPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE'),
         );
     }
 
@@ -519,12 +488,15 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
         Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
         Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
+        Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
+        Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_HOMEPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_HOMEPAGE'));
+
+
         $apiKey = strval(Tools::getValue('HUMM_API_KEY'));
         if ($apiKey) {
-            //it seems that the 'password' type input fields were designed only to
-            //change a password; they never display anything.
             //https://www.prestashop.com/forums/topic/347850-possible-bug-with-helperform-and-password-type-fields/
-            //only save if a value was entered
             Configuration::updateValue('HUMM_API_KEY', $apiKey);
         }
     }
