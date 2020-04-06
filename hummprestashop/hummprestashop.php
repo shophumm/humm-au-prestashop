@@ -474,6 +474,8 @@ class Hummprestashop extends PaymentModule
             'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
             'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
             'HUMM_DISPLAY_BANNER_HOMEPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE'),
+            'HUMM_DISPLAY_BANNER_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE'),
+            'HUMM_DISPLAY_WIDGET_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'),
         );
     }
 
@@ -492,6 +494,8 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
         Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
         Configuration::updateValue('HUMM_DISPLAY_BANNER_HOMEPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_HOMEPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
 
 
         $apiKey = strval(Tools::getValue('HUMM_API_KEY'));
