@@ -325,13 +325,13 @@ class Hummprestashop extends PaymentModule {
     /**
      * Add the CSS & JavaScript files you want to be loaded in the BO.
      */
-    public function hookBackOfficeHeader() {
-
-        if ( Tools::getValue( 'module_name' ) == $this->name ) {
-            $this->context->controller->addJS( $this->_path . 'views/js/back.js' );
-            $this->context->controller->addCSS( $this->_path . 'views/css/back.css' );
-        }
-    }
+//    public function hookBackOfficeHeader() {
+//
+//        if ( Tools::getValue( 'module_name' ) == $this->name ) {
+//            $this->context->controller->addJS( $this->_path . 'views/js/back.js' );
+//            $this->context->controller->addCSS( $this->_path . 'views/css/back.css' ,'all');
+//        }
+//    }
     public function hookDisplayBackOfficeHeader()
     {
             $this->context->controller->addCSS($this->_path.'views/css/back.css', 'all');

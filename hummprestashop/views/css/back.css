@@ -26,10 +26,10 @@
 * to avoid any conflicts with others containers.
 */
 .humm-payment-logo {
-    display: inline-block;
-    vertical-align: middle;
-    margin: 1px 20px 1px 1px;
-    width: 137px;
+    /*display: inline-block;*/
+    /*vertical-align: middle;*/
+    /*margin: 1px 20px 1px 1px;*/
+    /*width: 137px;*/
     height: 100px;
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-image: url(../img/bird-humm.svg);
