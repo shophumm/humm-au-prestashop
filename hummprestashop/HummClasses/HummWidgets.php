@@ -127,7 +127,7 @@ class hummWidgets extends Humm
    */
   public function render_widget_cart()
   {
-    return $this->fetch('module:zipmoneypayment/views/templates/hooks/cart_widget.tpl');
+    return $this->fetch('module:hummprestashop/views/templates/hooks/cart_widget.tpl');
   }
 
   /**
@@ -138,7 +138,7 @@ class hummWidgets extends Humm
    */
   public function render_widget_product()
   {
-    return $this->fetch('module:zipmoneypayment/views/templates/hooks/product_widget.tpl');
+    return $this->fetch('module:hummprestashop/views/templates/hooks/product_widget.tpl');
   }
 
   /**
@@ -149,7 +149,7 @@ class hummWidgets extends Humm
    */
   private function _render_banner()
   {
-    return $this->fetch('module:zipmoneypayment/views/templates/hooks/banner.tpl');
+    return $this->fetch('module:hummprestashop/views/templates/hooks/banner.tpl');
   }
 
   /**
@@ -160,7 +160,7 @@ class hummWidgets extends Humm
    */
   public function render_tagline_product()
   {
-    return $this->fetch('module:zipmoneypayment/views/templates/hooks/tagline.tpl');
+    return $this->fetch('module:hummprestashop/views/templates/hooks/tagline.tpl');
   }
 
   /**
@@ -171,7 +171,7 @@ class hummWidgets extends Humm
    */
   public function render_tagline_cart()
   {
-    return $this->fetch('module:zipmoneypayment/views/templates/hooks/tagline-cart.tpl');
+    return $this->fetch('module:hummprestashop/views/templates/hooks/tagline-cart.tpl');
   }
 
 }
