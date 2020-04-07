@@ -1,19 +1,19 @@
 <?php
-namespace Classes\Helper;
+namespace HummClasses\Helper;
 
 if (!defined('_PS_VERSION_'))
   exit;
 
 /**
  * Class Logger
- * @package Classes\Helper
+ * @package HummClasses\Classes\Helper
  */
 class Logger {
 
   private static $fileLogger;  // Log file name
 
   private static $filePath ; // Log file name
-  private static $fileName = "HummPayments.log";  // Log file name
+  private static $fileName = "Humm-Payments.log";  // Log file name
 
   const ERROR   = 7;  // Error: error conditions
   const WARN    = 8;  // Warning: warning conditions
@@ -51,15 +51,14 @@ class Logger {
       return false;
     }
 
-    $configLevel = (\Tools::getValue('humm_logging', \Configuration::get('HUMM_LOGGING')));
+    $configLevel = (\Tools::getValue('HUMM_LOGGING', \Configuration::get('HUMM_LOGGING')));
 
-    if(!$overideConfig){
+    if(!$overideConfig){ // You can use this variable to log regardless of config settings.
       if (!$configLevel){
         return false;
       }
     }
 
-    // Errors are always logged.
     if ($configLevel < 7){
       $configLevel = self::INFO; // default log level
     }

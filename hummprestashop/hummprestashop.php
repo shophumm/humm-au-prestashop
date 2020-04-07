@@ -513,6 +513,7 @@ class Hummprestashop extends PaymentModule
             'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
             'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
             'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
+            'FORCE_HUMM' => Configuration::get('FORCE_HUMM'),
             'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
             'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
             'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
@@ -534,6 +535,7 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
         Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
         Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
+        Configuration::updateValue('FORCE_HUMM', Tools::getValue('FORCE_HUMM'));
         Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
         Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
         Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
