@@ -1,5 +1,5 @@
 {*
-* 2007-2017 PrestaShop
+* 2007-2016 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,20 +18,15 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2017 PrestaShop SA
+*  @copyright 2007-2016 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-<div class="row">
-    <div class="col-xs-12">
-        <p class="payment_module" id="hummprestashop_payment_button">
-            {if $humm_validation_errors }
-                {$humm_validation_errors}
-            {else}
-                <span>
-                    {$description}
-		</span>
-            {/if}
-        </p>
-    </div>
-</div>
+
+<p>
+  <br /><br />
+	{l s='You have chosen the zipMoney method.' mod='zipmoneypayment'}
+	<br /><br /><span class="paypal-bold">{l s='Your order will be sent very soon.' mod='zipmoneypayment'}</span>
+	<br /><br />{l s='For any questions or for further information, please contact our' mod='zipmoneypayment'}
+	<a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}" data-ajax="false" target="_blank">{l s='customer support' mod='zipmoneypayment'}</a>.
+</p>

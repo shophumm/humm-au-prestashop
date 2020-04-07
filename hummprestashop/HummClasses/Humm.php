@@ -2,12 +2,11 @@
 
 namespace HummClasses;
 
+use HummClasses\Helper\Logger;
+
 if (!defined('_PS_VERSION_'))
     exit;
-
-
-use HummClasses\Helper\Logger as HummLogger;
-
+require_once(dirname(__FILE__) . '/Helper/Logger.php');
 /**
  * Class Humm
  * @package HummClasses
@@ -35,7 +34,8 @@ class Humm
      */
     public static function bootstrap()
     {
-        HummLogger::setup();
+        $HummLogger = new Logger();
+        $HummLogger::setup();
     }
 
 }

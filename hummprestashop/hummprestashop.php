@@ -29,8 +29,9 @@ use PrestaShop\PrestaShop\Core\Payment\PaymentOption;
 if (!defined('_PS_VERSION_')) {
     exit;
 }
-
 require_once(dirname(__FILE__) . '/common/HummCommon.php');
+require_once(dirname(__FILE__) . '/HummClasses/HummWidgets.php');
+require_once(dirname(__FILE__) . '/HummClasses/Humm.php');
 
 class Hummprestashop extends PaymentModule
 {
@@ -59,6 +60,11 @@ class Hummprestashop extends PaymentModule
         $this->limited_currencies = array('AUD', 'NZD');
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.7.99.99');
+
+        $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
+        $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
+
+        \HummClasses\Humm::bootstrap();
     }
 
     /**
@@ -80,6 +86,7 @@ class Hummprestashop extends PaymentModule
             (
                 !$this->registerHook('displayHeader') ||
                 !$this->registerHook('displayTop') ||
+                !$this->registerHook('displayBanner') ||
                 !$this->registerHook('displayFooter') ||
                 !$this->registerHook('displayProductButtons') ||
                 !$this->registerHook('displayProductPriceBlock') ||
@@ -119,31 +126,6 @@ class Hummprestashop extends PaymentModule
         Configuration::deleteByName('HUMM_DISPLAY_BANNER_HOMEPAGE');
 
         return parent::uninstall();
-    }
-
-    protected function _postValidation()
-    {
-        /**
-         * If values have been submitted in the form, process.
-         */
-        $postErrors = array();
-        if (((bool)Tools::isSubmit('submitHummprestashopModule')) == true) {
-            if (!Tools::getValue('HUMM_TITLE')) {
-                $postErrors[] = $this->l('Checkout Method is required.');
-            }
-            if (is_null(Tools::getValue('HUMM_TEST'))) {
-                $postErrors[] = $this->l('Is Test? is required.');
-            }
-            if (!Tools::getValue('HUMM_MERCHANT_ID')) {
-                $postErrors[] = $this->l('Merchant ID is required.');
-            }
-            if (!Tools::getValue('HUMM_API_KEY') && !Configuration::get('HUMM_API_KEY')) //read comment in postProcess() about the particularity of 'password' type input fields
-            {
-                $postErrors[] = $this->l('API Key is required.');
-            }
-        }
-
-        return $postErrors;
     }
 
     /**
@@ -186,6 +168,58 @@ class Hummprestashop extends PaymentModule
         return $html;
     }
 
+    protected function _postValidation()
+    {
+        /**
+         * If values have been submitted in the form, process.
+         */
+        $postErrors = array();
+        if (((bool)Tools::isSubmit('submitHummprestashopModule')) == true) {
+            if (!Tools::getValue('HUMM_TITLE')) {
+                $postErrors[] = $this->l('Checkout Method is required.');
+            }
+            if (is_null(Tools::getValue('HUMM_TEST'))) {
+                $postErrors[] = $this->l('Is Test? is required.');
+            }
+            if (!Tools::getValue('HUMM_MERCHANT_ID')) {
+                $postErrors[] = $this->l('Merchant ID is required.');
+            }
+            if (!Tools::getValue('HUMM_API_KEY') && !Configuration::get('HUMM_API_KEY')) //read comment in postProcess() about the particularity of 'password' type input fields
+            {
+                $postErrors[] = $this->l('API Key is required.');
+            }
+        }
+
+        return $postErrors;
+    }
+
+    /**
+     * Save form data.
+     */
+    protected function postProcess()
+    {
+        //save the values for the rest of the configuration properties
+        Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
+        Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
+        Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
+        Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
+        Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
+        Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
+        Configuration::updateValue('FORCE_HUMM', Tools::getValue('FORCE_HUMM'));
+        Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
+        Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_HOMEPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_HOMEPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
+
+        $apiKey = strval(Tools::getValue('HUMM_API_KEY'));
+        if ($apiKey) {
+            //https://www.prestashop.com/forums/topic/347850-possible-bug-with-helperform-and-password-type-fields/
+            Configuration::updateValue('HUMM_API_KEY', $apiKey);
+        }
+    }
+
     /**
      * Create the form that will be displayed in the configuration of the module.
      */
@@ -212,6 +246,29 @@ class Hummprestashop extends PaymentModule
         );
 
         return $helper->generateForm(array($this->getConfigForm(), $this->getConfigWidgetForm()));
+    }
+
+    /**
+     * Set values for the inputs.
+     */
+    protected function getConfigFormValues()
+    {
+        return array(
+            'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
+            'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
+            'HUMM_TEST' => Configuration::get('HUMM_TEST'),
+            'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
+            'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
+            'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
+            'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
+            'FORCE_HUMM' => Configuration::get('FORCE_HUMM'),
+            'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
+            'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_HOMEPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE'),
+            'HUMM_DISPLAY_BANNER_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE'),
+            'HUMM_DISPLAY_WIDGET_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'),
+        );
     }
 
     /**
@@ -337,7 +394,6 @@ class Hummprestashop extends PaymentModule
             ),
         );
     }
-
 
     /**
      *
@@ -501,57 +557,6 @@ class Hummprestashop extends PaymentModule
     }
 
     /**
-     * Set values for the inputs.
-     */
-    protected function getConfigFormValues()
-    {
-        return array(
-            'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
-            'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
-            'HUMM_TEST' => Configuration::get('HUMM_TEST'),
-            'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
-            'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
-            'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
-            'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
-            'FORCE_HUMM' => Configuration::get('FORCE_HUMM'),
-            'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
-            'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
-            'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
-            'HUMM_DISPLAY_BANNER_HOMEPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE'),
-            'HUMM_DISPLAY_BANNER_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE'),
-            'HUMM_DISPLAY_WIDGET_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'),
-        );
-    }
-
-    /**
-     * Save form data.
-     */
-    protected function postProcess()
-    {
-        //save the values for the rest of the configuration properties
-        Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
-        Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
-        Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
-        Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
-        Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
-        Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
-        Configuration::updateValue('FORCE_HUMM', Tools::getValue('FORCE_HUMM'));
-        Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
-        Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
-        Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
-        Configuration::updateValue('HUMM_DISPLAY_BANNER_HOMEPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_HOMEPAGE'));
-        Configuration::updateValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE'));
-        Configuration::updateValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
-
-
-        $apiKey = strval(Tools::getValue('HUMM_API_KEY'));
-        if ($apiKey) {
-            //https://www.prestashop.com/forums/topic/347850-possible-bug-with-helperform-and-password-type-fields/
-            Configuration::updateValue('HUMM_API_KEY', $apiKey);
-        }
-    }
-
-    /**
      *
      */
     public function hookDisplayBackOfficeHeader()
@@ -609,36 +614,6 @@ class Hummprestashop extends PaymentModule
         return [$newOption];
     }
 
-    /**
-     * @param $params
-     * @return bool|string
-     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
-     */
-    public function hookPaymentReturn($params)
-    {
-        if ($this->active == false) {
-            return false;
-        }
-
-        $order = $params['order'];
-
-        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR')) {
-            $this->smarty->assign('status', 'ok');
-        }
-
-
-        $total = Tools::displayPrice($params['order']->getOrdersTotalPaid(), new Currency($params['order']->id_currency), false);
-        $this->smarty->assign(array(
-            'id_order' => $order->id,
-            'reference' => $order->reference,
-            'params' => $params,
-            'total' => $total,
-            'shop_name' => $this->context->shop->name
-        ));
-
-        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
-    }
-
     public function checkCurrency($cart)
     {
         $currency_order = new Currency((int)($cart->id_currency));
@@ -676,7 +651,7 @@ class Hummprestashop extends PaymentModule
 
         if ($cart->getOrderTotal() < floatval(Tools::getAllValues('HUMM_MIN_VALUE'))) {
 
-            return "Humm doesn't support purchases less than $".Tools::getAllValues('HUMM_MIN_VALUE');
+            return "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
         }
 
         $countryNames = array(
@@ -698,5 +673,62 @@ class Hummprestashop extends PaymentModule
         }
 
         return "";
+    }
+
+    /**
+     * Module Hook Display Top.
+     *
+     * @access public
+     * @return  widget html
+     */
+    public function hookDisplayHeader()
+    {
+        $html = $this->humm_widgets->render_banner_product();
+        if ($this->context->controller->php_self == 'index' &&
+            Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE')) {
+            var_export($html);
+        } else if ($this->context->controller->php_self == 'product' &&
+            Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        } elseif (($this->context->controller->php_self == 'cart' || $this->context->controller->php_self == 'order') &&
+            Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        } else if ($this->context->controller->php_self == 'category' &&
+            Configuration::get('HUMM_DISPLAY_BANNER_CATEGORYPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        }
+    }
+
+    /**
+     * @param $params
+     * @return bool|string
+     * @throws \PrestaShop\PrestaShop\Core\Localization\Exception\LocalizationException
+     */
+    public function hookPaymentReturn($params)
+    {
+        if ($this->active == false) {
+            return false;
+        }
+
+        $order = $params['order'];
+
+        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR')) {
+            $this->smarty->assign('status', 'ok');
+        }
+
+
+        $total = Tools::displayPrice($params['order']->getOrdersTotalPaid(), new Currency($params['order']->id_currency), false);
+        $this->smarty->assign(array(
+            'id_order' => $order->id,
+            'reference' => $order->reference,
+            'params' => $params,
+            'total' => $total,
+            'shop_name' => $this->context->shop->name
+        ));
+
+        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 }

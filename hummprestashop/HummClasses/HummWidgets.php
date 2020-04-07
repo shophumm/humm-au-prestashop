@@ -1,6 +1,6 @@
 <?php
-namespace Classes;
-
+namespace HummClasses;
+require_once(dirname(__FILE__) . '/Humm.php');
 if (!defined('_PS_VERSION_'))
   exit;
 
@@ -12,14 +12,16 @@ use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
  * Class hummWidgets
  * @package Classes
  */
-class hummWidgets extends Humm
+class HummWidgets extends Humm
 {
 
   public $context = null;
+  public $log = null;
 
   public function __construct($context)
   {
     $this->context = $context;
+    HummLogger::info("start BPI");
   }
 
   /**
@@ -93,30 +95,7 @@ class hummWidgets extends Humm
       if ($cache_id !== null) {
           \Tools::restoreCacheSettings();
       }
-
       return $template->fetch();
-  }
-
-  /**
-   * Renders the element which contains the merchant public key and the api environment.
-   *
-   * @access public
-   * @return html
-   */
-  public function render_root_el()
-  {
-    //echo '<div data-zm-merchant="'.$this->_gateway->api_settings['merchant_public_key'].'" data-env="'.$this->_gateway->environment.'"></div> ';
-  }
-
-  /**
-   * Renders the widget below add to cart / proceed to checkout button in product or cart pages.
-   *
-   * @access public
-   * @return html
-   */
-  public function render_widget_general()
-  {
-    echo '<div class="widget-product-cart" data-zm-asset="productwidget" data-zm-widget="popup"  data-zm-popup-asset="termsdialog"></div>';
   }
 
   /**
@@ -150,28 +129,6 @@ class hummWidgets extends Humm
   private function _render_banner()
   {
     return $this->fetch('module:hummprestashop/views/templates/hooks/banner.tpl');
-  }
-
-  /**
-   * Renders the tagline after the price in product page.
-   *
-   * @access public
-   * @return html
-   */
-  public function render_tagline_product()
-  {
-    return $this->fetch('module:hummprestashop/views/templates/hooks/tagline.tpl');
-  }
-
-  /**
-   * Renders the tagline after the total price in cart.
-   *
-   * @access public
-   * @return html
-   */
-  public function render_tagline_cart()
-  {
-    return $this->fetch('module:hummprestashop/views/templates/hooks/tagline-cart.tpl');
   }
 
 }

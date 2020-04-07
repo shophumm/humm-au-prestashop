@@ -14,7 +14,6 @@ class Logger {
 
   private static $filePath ; // Log file name
   private static $fileName = "Humm-Payments.log";  // Log file name
-
   const ERROR   = 7;  // Error: error conditions
   const WARN    = 8;  // Warning: warning conditions
   const INFO    = 9;  // Informational: informational messages
