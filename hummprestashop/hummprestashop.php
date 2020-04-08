@@ -717,6 +717,6 @@ class Hummprestashop extends PaymentModule
             'shop_name' => $this->context->shop->name
         ));
 
-        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
+        return $this->display(__FILE__, 'views/templates/hooks/confirmation.tpl');
     }
 }
