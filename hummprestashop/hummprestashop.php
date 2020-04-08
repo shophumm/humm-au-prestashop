@@ -79,7 +79,6 @@ class Hummprestashop extends PaymentModule
 
             return false;
         }
-
         //Default values
         Configuration::updateValue('HUMM_TITLE', 'Humm');
         if (version_compare(_PS_VERSION_, '1.5', '>=') &&
@@ -205,7 +204,7 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
         Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
         Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
-        Configuration::updateValue('FORCE_HUMM', Tools::getValue('FORCE_HUMM'));
+        Configuration::updateValue('HUMM_FORCE_HUMM', Tools::getValue('HUMM_FORCE_HUMM'));
         Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
         Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
         Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
@@ -261,7 +260,7 @@ class Hummprestashop extends PaymentModule
             'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
             'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
             'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
-            'FORCE_HUMM' => Configuration::get('FORCE_HUMM'),
+            'HUMM_FORCE_HUMM' => Configuration::get('HUMM_FORCE_HUMM'),
             'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
             'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
             'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
@@ -347,7 +346,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => 'select',
                         'label' => $this->l('FORCE HUMM'),
-                        'name' => 'FORCE HUMM',
+                        'name' => 'HUMM_FORCE_HUMM',
                         'required' => true,
                         'options' => array(
                             'query' => array(
@@ -364,14 +363,6 @@ class Hummprestashop extends PaymentModule
                         'prefix' => '<i class="icon icon-globe"></i>',
                         'name' => 'HUMM_GATEWAY_URL',
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
-                    ),
-
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('MIN ORDER AMOUNT'),
-                        'prefix' => '<i class="icon icon-globe"></i>',
-                        'name' => 'MIN ORDER AMOUNT',
-                        'desc' => $this->l('MIN ORDER AMOUNT')
                     ),
 
                     array(
@@ -608,7 +599,7 @@ class Hummprestashop extends PaymentModule
         $newOption->setModuleName($this->name);
         $newOption->setCallToActionText($this->trans('Pay by ' . Configuration::get('HUMM_TITLE'), array(), 'Modules.Hummprestashop.Admin'));
         $newOption->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
-        $newOption->setAdditionalInformation($this->fetch($this->local_path . 'views/templates/hook/payment.tpl'));
+        $newOption->setAdditionalInformation($this->fetch($this->local_path . 'views/templates/hooks/payment.tpl'));
         $newOption->setLogo(Media::getMediaPath($this->local_path . 'images/' . strtolower(Configuration::get('HUMM_TITLE')) . '-small.png'));
 
         return [$newOption];
@@ -683,20 +674,17 @@ class Hummprestashop extends PaymentModule
      */
     public function hookDisplayHeader()
     {
-        $html = $this->humm_widgets->render_banner_product();
+
         if ($this->context->controller->php_self == 'index' &&
             Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
             var_export($html);
         } else if ($this->context->controller->php_self == 'product' &&
             Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE')) {
             $html = $this->humm_widgets->render_banner_product();
             var_export($html);
-        } elseif (($this->context->controller->php_self == 'cart' || $this->context->controller->php_self == 'order') &&
-            Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE')) {
-            $html = $this->humm_widgets->render_banner_product();
-            var_export($html);
         } else if ($this->context->controller->php_self == 'category' &&
-            Configuration::get('HUMM_DISPLAY_BANNER_CATEGORYPAGE')) {
+            Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE')) {
             $html = $this->humm_widgets->render_banner_product();
             var_export($html);
         }
