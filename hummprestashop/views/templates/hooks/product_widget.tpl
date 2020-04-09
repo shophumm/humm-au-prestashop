@@ -1,1 +1,2 @@
-<div class="widget-product" data-zm-asset="productwidget" data-zm-widget="popup"  data-zm-popup-asset="termsdialog"></div>
+
+<script src="https://widgets.shophumm.com.au/content/scripts/price-info.js?productPrice={$productPrice}&LittleThings"></script>
