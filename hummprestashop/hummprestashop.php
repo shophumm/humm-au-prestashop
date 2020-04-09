@@ -98,6 +98,7 @@ class Hummprestashop extends PaymentModule
                 !$this->registerHook('displayFooter') ||
                 !$this->registerHook('displayProductButtons') ||
                 !$this->registerHook('displayProductPriceBlock') ||
+                !$this->registerHook('displayCheckoutSummaryTop') ||
                 !$this->registerHook('displayShoppingCartFooter')
             )
         ) {
@@ -737,10 +738,23 @@ class Hummprestashop extends PaymentModule
             $this->smarty->assign(array(
                 'productPrice' => $param['product']['price_amount']
             ));
-//              $html = $this->humm_widgets->render_widget_product();
-//              echo $html;
-            return $this->display(__FILE__,'views/templates/hooks/product_widget.tpl');
+            return $this->display(__FILE__, 'views/templates/hooks/product_widget.tpl');
         }
 
+    }
+
+    /**
+     * @param $param
+     * @return string
+     * @throws Exception
+     */
+    public function hookDisplayShoppingCartFooter($param)
+    {
+        if (Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE')) {
+            $this->smarty->assign(array(
+                'productPrice' => $this->context->cart->getOrderTotal(true)
+            ));
+            return $this->display(__FILE__, 'views/templates/hooks/product_widget.tpl');
+        };
     }
 }
