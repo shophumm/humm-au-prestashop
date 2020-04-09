@@ -1,5 +1,5 @@
 {*
-* 2007-2016 PrestaShop
+* 2007-2017 PrestaShop
 *
 * NOTICE OF LICENSE
 *
@@ -18,15 +18,30 @@
 * needs please refer to http://www.prestashop.com for more information.
 *
 *  @author    PrestaShop SA <contact@prestashop.com>
-*  @copyright 2007-2016 PrestaShop SA
+*  @copyright 2007-2017 PrestaShop SA
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
 
-<p>
-  <br /><br />
-	{l s='You have chosen the zipMoney method.' mod='zipmoneypayment'}
-	<br /><br /><span class="paypal-bold">{l s='Your order will be sent very soon.' mod='zipmoneypayment'}</span>
-	<br /><br />{l s='For any questions or for further information, please contact our' mod='zipmoneypayment'}
-	<a href="{$link->getPageLink('contact', true)|escape:'htmlall':'UTF-8'}" data-ajax="false" target="_blank">{l s='customer support' mod='zipmoneypayment'}</a>.
-</p>
+{if (isset($status) == true) && ($status == 'ok')}
+    <h3>{l s='Your order on %s is complete.' sprintf=[$shop_name] mod='hummprestashop'}</h3>
+    <p>
+        <br/>- {l s='Amount' mod='hummprestashop'} : <span
+                class="price"><strong>{$total|escape:'htmlall':'UTF-8'}</strong></span>
+        <br/>- {l s='Reference' mod='hummprestashop'} : <span
+                class="reference"><strong>{$reference|escape:'html':'UTF-8'}</strong></span>
+        <br/><br/>{l s='An email has been sent with this information.' mod='hummprestashop'}
+        <br/><br/>{l s='If you have questions, comments or concerns, please contact our' mod='hummprestashop'} <a
+                href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team.' mod='hummprestashop'}</a>
+    </p>
+{else}
+    <h3>{l s='Your order on %s has not been accepted.' sprintf=[$shop_name] mod='hummprestashop'}</h3>
+    <p>
+        <br/>- {l s='Reference' mod='hummprestashop'} <span
+                class="reference"> <strong>{$reference|escape:'html':'UTF-8'}</strong></span>
+        <br/><br/>{l s='Please, try to order again.' mod='hummprestashop'}
+        <br/><br/>{l s='If you have questions, comments or concerns, please contact our' mod='hummprestashop'} <a
+                href="{$link->getPageLink('contact', true)|escape:'html':'UTF-8'}">{l s='expert customer support team.' mod='hummprestashop'}</a>
+    </p>
+{/if}
+<hr/>
