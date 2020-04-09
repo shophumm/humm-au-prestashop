@@ -6,8 +6,8 @@
     <description><![CDATA[Accept payments for your products via humm.]]></description>
     <author><![CDATA[Humm]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
-    <confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>
+	<confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
     <need_instance>0</need_instance>
-    <limited_countries></limited_countries>
+	<limited_countries></limited_countries>
 </module>

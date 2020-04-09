@@ -61,7 +61,7 @@ class Hummprestashop extends PaymentModule
 
         $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.7.99.99');
 
-        $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
+//        $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
         $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
 
         \HummClasses\Humm::bootstrap();
@@ -81,29 +81,29 @@ class Hummprestashop extends PaymentModule
         }
         //Default values
         Configuration::updateValue('HUMM_TITLE', 'Humm');
-        if (version_compare(_PS_VERSION_, '1.5', '>=') &&
-            (
-                !$this->registerHook('displayHeader') ||
-                !$this->registerHook('displayTop') ||
-                !$this->registerHook('displayBanner') ||
-                !$this->registerHook('displayFooter') ||
-                !$this->registerHook('displayProductButtons') ||
-                !$this->registerHook('displayProductPriceBlock') ||
-                !$this->registerHook('displayShoppingCartFooter')
-            )
-        ) {
-            return false;
-        }
+//        if (version_compare(_PS_VERSION_, '1.5', '>=') &&
+//            (
+//                !$this->registerHook('displayHeader') ||
+//                !$this->registerHook('displayTop') ||
+//                !$this->registerHook('displayBanner') ||
+//                !$this->registerHook('displayFooter') ||
+//                !$this->registerHook('displayProductButtons') ||
+//                !$this->registerHook('displayProductPriceBlock') ||
+//                !$this->registerHook('displayShoppingCartFooter')
+//            )
+//        ) {
+//            return false;
+//        }
 
-        if (version_compare(_PS_VERSION_, '1.7', '>=') &&
-            (
-                !$this->registerHook('displayBeforeBodyClosingTag') ||
-                !$this->registerHook('displayExpressCheckout') ||
-                !$this->registerHook('paymentOptions')
-            )
-        ) {
-            return false;
-        }
+//        if (version_compare(_PS_VERSION_, '1.7', '>=') &&
+//            (
+//                !$this->registerHook('displayBeforeBodyClosingTag') ||
+//                !$this->registerHook('displayExpressCheckout') ||
+//                !$this->registerHook('paymentOptions')
+//            )
+//        ) {
+//            return false;
+//        }
 
         return parent::install() &&
             $this->registerHook('header') &&
@@ -719,4 +719,24 @@ class Hummprestashop extends PaymentModule
 
         return $this->display(__FILE__, 'views/templates/hooks/confirmation.tpl');
     }
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+
+    public function hookDisplayProductPriceBlock($param)
+    {
+        var_dump($this);
+        if(Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE') && $this->context->controller->php_self == 'product' && $param['type'] == "weight")
+            ;
+//            return $this->zm_widgets->render_tagline_product();
+    }
+    public function hookDisplayProductButtons()
+    {
+        var_dump("mmmmhhhhhh");
+        if(Configuration::get('ZM_DISPLAY_WIDGET_PRODUCTPAGE'))
+            return $this->zm_widgets->render_widget_product();
+    }
+
 }
