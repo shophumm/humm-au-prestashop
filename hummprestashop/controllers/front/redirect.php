@@ -24,11 +24,14 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
-require_once( dirname( __FILE__ ) . '/../../HummClasses/Helper/Logger.php' );
+use HummClasses\Helper\Logger;
+
+require_once(dirname(__FILE__) . '/../../common/HummCommon.php');
+require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
 
 
-class HummprestashopRedirectModuleFrontController extends ModuleFrontController {
+class HummprestashopRedirectModuleFrontController extends ModuleFrontController
+{
     /**
      * Do whatever you have to before redirecting the customer on the website of your payment processor.
      */
@@ -52,62 +55,87 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'live_refund_address' => 'https://buyerapi.shophumm.co.nz/api/ExternalRefund/v1/processrefund',
         ]
     ];
-    public function postProcess() {
 
-        $cart                 = $this->context->cart;
-        $customer             = new Customer( $cart->id_customer );
-        $address_billing      = new Address( $cart->id_address_invoice );
-        $address_shipping     = new Address( $cart->id_address_delivery );
-        $country_billing      = new Country( $address_shipping->id_country );
-        $country_shipping     = new Country( $address_shipping->id_country );
-        $state_billing        = new State( $address_billing->id_state );
-        $state_shipping       = new State( $address_shipping->id_state );
-        $customerPhone        = $address_billing->phone_mobile ? $address_billing->phone_mobile : ( $address_billing->phone ? $address_billing->phone : '' );
-        $query                = array(
-            'x_currency'                   => $this->context->currency->iso_code,
-            'x_url_callback'               => $this->context->link->getModuleLink( 'hummprestashop', 'confirmation' ),
-            'x_url_complete'               => $this->context->link->getModuleLink( 'hummprestashop', 'confirmation' ),
-            'x_url_cancel'                 => $this->context->link->getPageLink( 'order', true, null, "step=3" ),
-            'x_shop_name'                  => Configuration::get( 'PS_SHOP_NAME' ),
-            'x_shop_country'               => $iso_code = Country::getIsoById( Configuration::get( 'PS_COUNTRY_DEFAULT' ) ),
-            'x_account_id'                 => Configuration::get( 'HUMM_MERCHANT_ID' ),
-            'x_reference'                  => "{$cart->id}-{$customer->secure_key}",
-            'x_invoice'                    => $cart->id,
-            'x_amount'                     => $cart->getOrderTotal( true, Cart::BOTH ),
-            'x_customer_first_name'        => $customer->firstname,
-            'x_customer_last_name'         => $customer->lastname,
-            'x_customer_email'             => $customer->email,
-            'x_customer_phone'             => $customerPhone,
-            'x_customer_billing_address1'  => $address_billing->address1,
-            'x_customer_billing_address2'  => $address_billing->address2,
-            'x_customer_billing_city'      => $address_billing->city,
-            'x_customer_billing_state'     => $state_billing->name,
-            'x_customer_billing_zip'       => $address_billing->postcode,
-            'x_customer_billing_country'   => $country_billing->iso_code,
+    /**
+     * HummprestashopRedirectModuleFrontController constructor
+     */
+
+    public  function __construct(){
+        Logger::setup();
+     }
+    public function postProcess()
+    {
+
+        $cart = $this->context->cart;
+        $customer = new Customer($cart->id_customer);
+        $address_billing = new Address($cart->id_address_invoice);
+        $address_shipping = new Address($cart->id_address_delivery);
+        $country_billing = new Country($address_shipping->id_country);
+        $country_shipping = new Country($address_shipping->id_country);
+        $state_billing = new State($address_billing->id_state);
+        $state_shipping = new State($address_shipping->id_state);
+        $customerPhone = $address_billing->phone_mobile ? $address_billing->phone_mobile : ($address_billing->phone ? $address_billing->phone : '');
+        $query = array(
+            'x_currency' => $this->context->currency->iso_code,
+            'x_url_callback' => $this->context->link->getModuleLink('hummprestashop', 'confirmation'),
+            'x_url_complete' => $this->context->link->getModuleLink('hummprestashop', 'confirmation'),
+            'x_url_cancel' => $this->context->link->getPageLink('order', true, null, "step=3"),
+            'x_shop_name' => Configuration::get('PS_SHOP_NAME'),
+            'x_shop_country' => $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT')),
+            'x_account_id' => Configuration::get('HUMM_MERCHANT_ID'),
+            'x_reference' => "{$cart->id}-{$customer->secure_key}",
+            'x_invoice' => $cart->id,
+            'x_amount' => $cart->getOrderTotal(true, Cart::BOTH),
+            'x_customer_first_name' => $customer->firstname,
+            'x_customer_last_name' => $customer->lastname,
+            'x_customer_email' => $customer->email,
+            'x_customer_phone' => $customerPhone,
+            'x_customer_billing_address1' => $address_billing->address1,
+            'x_customer_billing_address2' => $address_billing->address2,
+            'x_customer_billing_city' => $address_billing->city,
+            'x_customer_billing_state' => $state_billing->name,
+            'x_customer_billing_zip' => $address_billing->postcode,
+            'x_customer_billing_country' => $country_billing->iso_code,
             'x_customer_shipping_address1' => $address_shipping->address1,
             'x_customer_shipping_address2' => $address_shipping->address2,
-            'x_customer_shipping_city'     => $address_shipping->city,
-            'x_customer_shipping_state'    => $state_shipping->name,
-            'x_customer_shipping_zip'      => $address_shipping->postcode,
-            'x_customer_shipping_country'  => $country_shipping->iso_code,
-            'x_test'                       => 'false',
-            'version_info'                 => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr( _PS_VERSION_, 0, 3 )
+            'x_customer_shipping_city' => $address_shipping->city,
+            'x_customer_shipping_state' => $state_shipping->name,
+            'x_customer_shipping_zip' => $address_shipping->postcode,
+            'x_customer_shipping_country' => $country_shipping->iso_code,
+            'x_test' => 'false',
+            'version_info' => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr(_PS_VERSION_, 0, 3)
         );
-        $signature            = HummCommon::generateSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
+        $signature = HummCommon::generateSignature($query, Configuration::get('HUMM_API_KEY'));
         $query['x_signature'] = $signature;
 
-        $this->context->smarty->assign( array(
-            'nbProducts'    => $cart->nbProducts(),
+        $this->context->smarty->assign(array(
+            'nbProducts' => $cart->nbProducts(),
             'cust_currency' => $cart->id_currency,
-            'currencies'    => $this->module->getCurrency( (int) $cart->id_currency ),
-            'total'         => $cart->getOrderTotal( true, Cart::BOTH ),
-            'this_path'     => $this->module->getPathUri(),
-            'this_path_bw'  => $this->module->getPathUri(),
-            'form_query'    => $this->generate_processing_form( $this->getGatewayUrl(), $query ),
-            'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
-        ) );
+            'currencies' => $this->module->getCurrency((int)$cart->id_currency),
+            'total' => $cart->getOrderTotal(true, Cart::BOTH),
+            'this_path' => $this->module->getPathUri(),
+            'this_path_bw' => $this->module->getPathUri(),
+            'form_query' => $this->generate_processing_form($this->getGatewayUrl(), $query),
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
+        ));
 
-        $this->setTemplate( 'module:hummprestashop/views/templates/front/redirect.tpl' );
+        Logger::info(json_encode($query));
+
+        $this->setTemplate('module:hummprestashop/views/templates/front/redirect.tpl');
+    }
+
+    function generate_processing_form($checkoutUrl, $query)
+    {
+
+        $html = "<form style='display:none;' id='hummload' method='post' action='$checkoutUrl'>";
+
+        foreach ($query as $item => $value) {
+            $html .= "<input id='$item' name='$item' value='" . htmlspecialchars($value, ENT_QUOTES) . "' type='hidden'/>";
+        }
+
+        $html .= "</form>";
+
+        return $html;
     }
 
     protected function getGatewayUrl()
@@ -116,53 +144,41 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         if (strtolower(substr($gatewayUrl, 0, 4)) == 'http') {
             return $gatewayUrl;
         }
-        $title       = Configuration::get( 'HUMM_TITLE' );
-        $countryCode = Configuration::get( 'HUMM_COUNTRY' );
-        $isTest      = Configuration::get( 'HUMM_TEST' );
+        $title = Configuration::get('HUMM_TITLE');
+        $countryCode = Configuration::get('HUMM_COUNTRY');
+        $isTest = Configuration::get('HUMM_TEST');
         $domainsTest = array(
-            'Humm'   => 'integration-cart.shophumm',
+            'Humm' => 'integration-cart.shophumm',
             'Oxipay' => 'securesandbox.oxipay'
         );
-        $domains     = array(
-            'Humm'   => 'cart.shophumm',
+        $domains = array(
+            'Humm' => 'cart.shophumm',
             'Oxipay' => 'secure.oxipay'
         );
 
         $country_domain = $countryCode == 'NZ' ? '.co.nz' : '.com.au';
 
-        $gatewayUrl  = 'https://' . ( $isTest ? $domainsTest[ $title ] : $domains[ $title ] ) . ( $countryCode == 'NZ' ? '.co.nz' : '.com.au' ) . '/Checkout?platform=Default';
+        $gatewayUrl = 'https://' . ($isTest ? $domainsTest[$title] : $domains[$title]) . ($countryCode == 'NZ' ? '.co.nz' : '.com.au') . '/Checkout?platform=Default';
 
         return $gatewayUrl;
     }
 
-    protected function displayError( $message, $description = false ) {
+    protected function displayError($message, $description = false)
+    {
         /**
          * Create the breadcrumb for your ModuleFrontController.
          */
-        $this->context->smarty->assign( 'path', '
-			<a href="' . $this->context->link->getPageLink( 'order', null, null, 'step=3' ) . '">' . $this->module->l( 'Payment' ) . '</a>
-			<span class="navigation-pipe">&gt;</span>' . $this->module->l( 'Error' ) );
+        $this->context->smarty->assign('path', '
+			<a href="' . $this->context->link->getPageLink('order', null, null, 'step=3') . '">' . $this->module->l('Payment') . '</a>
+			<span class="navigation-pipe">&gt;</span>' . $this->module->l('Error'));
 
         /**
          * Set error message and description for the template.
          */
-        array_push( $this->errors, $this->module->l( $message ), $description );
+        array_push($this->errors, $this->module->l($message), $description);
 
-        $this->setTemplate( $this->local_path . 'error.tpl' );
+        $this->setTemplate($this->local_path . 'error.tpl');
 
         return;
-    }
-
-    function generate_processing_form( $checkoutUrl, $query ) {
-
-        $html = "<form style='display:none;' id='hummload' method='post' action='$checkoutUrl'>";
-
-        foreach ( $query as $item => $value ) {
-            $html .= "<input id='$item' name='$item' value='" . htmlspecialchars( $value, ENT_QUOTES ) . "' type='hidden'/>";
-        }
-
-        $html .= "</form>";
-
-        return $html;
     }
 }

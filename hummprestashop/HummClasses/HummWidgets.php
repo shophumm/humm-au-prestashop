@@ -1,12 +1,10 @@
 <?php
 namespace HummClasses;
+use HummClasses\Helper\Logger;
+
 require_once(dirname(__FILE__) . '/Humm.php');
 if (!defined('_PS_VERSION_'))
   exit;
-
-use \HummClasses\Helper\Logger as HummLogger;
-use PrestaShop\PrestaShop\Core\Module\WidgetInterface;
-
 
 /**
  * Class hummWidgets
@@ -21,7 +19,7 @@ class HummWidgets extends Humm
   public function __construct($context)
   {
     $this->context = $context;
-    HummLogger::info("start BPI");
+    Humm::bootstrap();
   }
 
   /**
@@ -95,6 +93,7 @@ class HummWidgets extends Humm
       if ($cache_id !== null) {
           \Tools::restoreCacheSettings();
       }
+      Logger::info($templatePath);
       return $template->fetch();
   }
 

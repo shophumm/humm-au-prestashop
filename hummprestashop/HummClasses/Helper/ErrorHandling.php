@@ -1,5 +1,6 @@
 <?php
-namespace Classes\Helper;
+namespace HummClasses\Helper;
+
 if (!defined('_PS_VERSION_'))
   exit;
 
