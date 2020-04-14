@@ -126,6 +126,8 @@ class Hummprestashop extends PaymentModule
         Configuration::deleteByName('HUMM_TEST');
         Configuration::deleteByName('HUMM_GATEWAY_URL');
         Configuration::deleteByName('HUMM_MERCHANT_ID');
+        Configuration::deleteByName('HUMM_FORCE_HUMM');
+        Configuration::deleteByName('HUMM_MIN_ORDER');
         Configuration::deleteByName('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE');
         Configuration::deleteByName('HUMM_DISPLAY_WIDGET_CARTPAGE');
         Configuration::deleteByName('HUMM_DISPLAY_BANNER_CARTPAG');
