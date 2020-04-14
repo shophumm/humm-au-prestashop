@@ -114,9 +114,15 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'form_query' => $this->generate_processing_form($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-        Logger::setup() && Logger::info(json_encode($query));
+        Logger::setup() || Logger::info(json_encode($query));
         $this->setTemplate('module:hummprestashop/views/templates/front/redirect.tpl');
     }
+
+    /**
+     * @param $checkoutUrl
+     * @param $query
+     * @return string
+     */
 
     function generate_processing_form($checkoutUrl, $query)
     {
@@ -132,30 +138,45 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         return $html;
     }
 
+    /**
+     * @return string
+     */
+
     protected function getGatewayUrl()
     {
         $gatewayUrl = Configuration::get('HUMM_GATEWAY_URL');
         if (strtolower(substr($gatewayUrl, 0, 4)) == 'http') {
             return $gatewayUrl;
         }
-        $title = Configuration::get('HUMM_TITLE');
+        $title = $this->getTitle();
         $countryCode = Configuration::get('HUMM_COUNTRY');
         $isTest = Configuration::get('HUMM_TEST');
-        $domainsTest = array(
-            'Humm' => 'integration-cart.shophumm',
-            'Oxipay' => 'securesandbox.oxipay'
-        );
-        $domains = array(
-            'Humm' => 'cart.shophumm',
-            'Oxipay' => 'secure.oxipay'
-        );
+//        $domainsTest = array(
+//            'Humm' => 'integration-cart.shophumm',
+//            'Oxipay' => 'securesandbox.oxipay'
+//        );
+//        $domains = array(
+//            'Humm' => 'cart.shophumm',
+//            'Oxipay' => 'secure.oxipay'
+//        );
 
         $country_domain = $countryCode == 'NZ' ? '.co.nz' : '.com.au';
 
-        $gatewayUrl = 'https://' . ($isTest ? $domainsTest[$title] : $domains[$title]) . ($countryCode == 'NZ' ? '.co.nz' : '.com.au') . '/Checkout?platform=Default';
+        $isSandbox = Configuration::get('HUMM_TEST') == 1 ? 'sandboxURL' : 'liveURL';
+        Logger::setup() || Logger::info(json_encode(self::URLS[$title][$isSandbox]));
 
-        return $gatewayUrl;
+        return self::URLS[$title][$isSandbox];
+
+//        $gatewayUrl = 'https://' . ($isTest ? $domainsTest[$title] : $domains[$title]) . ($countryCode == 'NZ' ? '.co.nz' : '.com.au') . '/Checkout?platform=Default';
+//
+//        return $gatewayUrl;
     }
+
+    /**
+     * @param $message
+     * @param bool $description
+     * @throws PrestaShopException
+     */
 
     protected function displayError($message, $description = false)
     {
@@ -174,5 +195,25 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         $this->setTemplate($this->local_path . 'error.tpl');
 
         return;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        $forceHumm = Configuration::get('HUMM_FORCE_HUMM');
+
+        $countryCode = Configuration::get('HUMM_COUNTRY');
+
+        if ($countryCode == 'NZ') {
+            if ($forceHumm) {
+                return 'NZ_Humm';
+            } else {
+                return 'NZ_Oxipay';
+            }
+        } else {
+            return 'AU';
+        }
     }
 }
