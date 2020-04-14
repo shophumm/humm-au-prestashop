@@ -59,10 +59,6 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
     /**
      * HummprestashopRedirectModuleFrontController constructor
      */
-
-    public  function __construct(){
-        Logger::setup();
-     }
     public function postProcess()
     {
 
@@ -118,7 +114,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'form_query' => $this->generate_processing_form($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-
+        Logger::setup();
         Logger::info(json_encode($query));
 
         $this->setTemplate('module:hummprestashop/views/templates/front/redirect.tpl');
