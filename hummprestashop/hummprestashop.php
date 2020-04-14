@@ -590,9 +590,9 @@ class Hummprestashop extends PaymentModule
         if (!$this->checkCurrency($params['cart'])) {
             return false;
         }
-
-        if ($this->cartValidationErrors($params['cart'])) {
-            return false;
+        $notValid = $this->cartValidationErrors($params['cart']);
+        if ($notValid) {
+            \HummClasses\Helper\Logger::setup()||\HummClasses\Helper\Logger::INFO($this->cartValidationErrors($params['cart']));
         }
 
         $descriptions = array(
@@ -602,15 +602,14 @@ class Hummprestashop extends PaymentModule
 
         $this->smarty->assign(array(
             'description' => $descriptions[Configuration::get('HUMM_TITLE')],
+            'humm_validation_errors'=>$notValid,
         ));
-
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name);
         $newOption->setCallToActionText($this->trans('Pay by ' . Configuration::get('HUMM_TITLE'), array(), 'Modules.Hummprestashop.Admin'));
         $newOption->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
         $newOption->setAdditionalInformation($this->fetch($this->local_path . 'views/templates/hooks/payment.tpl'));
         $newOption->setLogo(Media::getMediaPath($this->local_path . 'images/' . strtolower(Configuration::get('HUMM_TITLE')) . '-small.png'));
-
         return [$newOption];
     }
 
@@ -649,9 +648,12 @@ class Hummprestashop extends PaymentModule
         $shippingCountryIsoCode = (new Country($shippingAddress->id_country))->iso_code;
         $currencyIsoCode = $currency->iso_code;
 
+        $msg = "";
+
         if ($cart->getOrderTotal() < floatval(Tools::getAllValues('HUMM_MIN_VALUE'))) {
 
-            return "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
+            $msg =  "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
+
         }
 
         $countryNames = array(
@@ -665,14 +667,13 @@ class Hummprestashop extends PaymentModule
         $countryCode = Configuration::get('HUMM_COUNTRY');
 
         if ($billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[$countryCode]) {
-            return "Humm doesn't support purchases from outside " . ($countryNames[$countryCode]) . ".";
+            $msg = $msg. "Sorry doesn't support billing purchases from outside " . ($countryNames[$countryCode]) . ".";
         }
 
         if ($shippingCountryIsoCode != $countryCode) {
-            return "Humm doesn't support purchases shipped outside " . ($countryNames[$countryCode]) . ".";
-        }
-
-        return "";
+            $msg =$msg."Sorry doesn't support purchases shipped outside " . ($countryNames[$countryCode]) . ".";
+         }
+         return $msg;
     }
 
     /**

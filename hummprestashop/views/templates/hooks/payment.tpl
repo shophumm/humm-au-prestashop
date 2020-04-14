@@ -25,13 +25,13 @@
 <div class="row">
     <div class="col-xs-12">
         <p class="payment_module" id="hummprestashop_payment_button">
-            {*{if $humm_validation_errors }*}
-                {*{$humm_validation_errors}*}
-            {*{else}*}
-                <span>
+            {if $humm_validation_errors}
+                <span> {$humm_validation_errors} </span>
+            {else}
+                 <span>
                     {$description}
-		</span>
-            {*{/if}*}
+		         </span>
+            {/if}
         </p>
     </div>
 </div>

@@ -120,26 +120,6 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param $checkoutUrl
-     * @param $query
-     * @return string
-     */
-
-    function generate_processing_form($checkoutUrl, $query)
-    {
-
-        $html = "<form style='display:none;' id='hummload' method='post' action='$checkoutUrl'>";
-
-        foreach ($query as $item => $value) {
-            $html .= "<input id='$item' name='$item' value='" . htmlspecialchars($value, ENT_QUOTES) . "' type='hidden'/>";
-        }
-
-        $html .= "</form>";
-
-        return $html;
-    }
-
-    /**
      * @return string
      */
 
@@ -204,7 +184,8 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
      * @param $parameters
      */
 
-    public static function logContent($parameters){
+    public static function logContent($parameters)
+    {
         Logger::setup() || Logger::info($parameters);
     }
 
