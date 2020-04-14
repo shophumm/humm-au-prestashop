@@ -43,7 +43,10 @@
     float: right;
 }
 
-.complex.humm-payment-section .humm-payment-byline {
+.humm-payment-byline {
+    color: goldenrod;
+    font-size: 15px;
+    margin-left: 30%;
     display: inline-block;
     vertical-align: middle;
     width: 50%;
