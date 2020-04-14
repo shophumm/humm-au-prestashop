@@ -46,14 +46,19 @@ class Logger
 
     public static function setup()
     {
-        self::$fileLogger = new \FileLogger;
+        if (!self::$fileLogger) {
+            self::$fileLogger = new \FileLogger;
 
-        if (version_compare(_PS_VERSION_, '1.7', '>='))
-            self::$filePath = _PS_ROOT_DIR_ . '/app/logs/';
-        else
-            self::$filePath = _PS_ROOT_DIR_ . '/log/';
+            if (version_compare(_PS_VERSION_, '1.7', '>='))
+                self::$filePath = _PS_ROOT_DIR_ . '/app/logs/';
+            else
+                self::$filePath = _PS_ROOT_DIR_ . '/log/';
 
-        self::$fileLogger->setFilename(self::$filePath . self::$fileName);
+            self::$fileLogger->setFilename(self::$filePath . self::$fileName);
+        }
+        else {
+            self::info("log is built in ".self::$filePath);
+        }
     }
 
 
