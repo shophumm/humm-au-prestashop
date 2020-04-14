@@ -99,6 +99,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'x_customer_shipping_zip' => $address_shipping->postcode,
             'x_customer_shipping_country' => $country_shipping->iso_code,
             'x_test' => 'false',
+            'x_transaction_timeout' => 120,
             'version_info' => 'Humm_' . HummCommon::HUMM_PLUGIN_VERSION . '_on_PS_' . substr(_PS_VERSION_, 0, 3)
         );
         $signature = HummCommon::generateSignature($query, Configuration::get('HUMM_API_KEY'));
@@ -111,10 +112,10 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'total' => $cart->getOrderTotal(true, Cart::BOTH),
             'this_path' => $this->module->getPathUri(),
             'this_path_bw' => $this->module->getPathUri(),
-            'form_query' => $this->generate_processing_form($this->getGatewayUrl(), $query),
+            'form_query' => $this->postToCheckoutTemplate($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-        Logger::setup() || Logger::info(json_encode($query));
+        self::logContent(json_encode($query));
         $this->setTemplate('module:hummprestashop/views/templates/front/redirect.tpl');
     }
 
@@ -149,27 +150,9 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             return $gatewayUrl;
         }
         $title = $this->getTitle();
-        $countryCode = Configuration::get('HUMM_COUNTRY');
-        $isTest = Configuration::get('HUMM_TEST');
-//        $domainsTest = array(
-//            'Humm' => 'integration-cart.shophumm',
-//            'Oxipay' => 'securesandbox.oxipay'
-//        );
-//        $domains = array(
-//            'Humm' => 'cart.shophumm',
-//            'Oxipay' => 'secure.oxipay'
-//        );
-
-        $country_domain = $countryCode == 'NZ' ? '.co.nz' : '.com.au';
-
         $isSandbox = Configuration::get('HUMM_TEST') == 1 ? 'sandboxURL' : 'liveURL';
-        Logger::setup() || Logger::info(json_encode(self::URLS[$title][$isSandbox]));
-
+        self::logContent(json_encode(self::URLS[$title][$isSandbox]));
         return self::URLS[$title][$isSandbox];
-
-//        $gatewayUrl = 'https://' . ($isTest ? $domainsTest[$title] : $domains[$title]) . ($countryCode == 'NZ' ? '.co.nz' : '.com.au') . '/Checkout?platform=Default';
-//
-//        return $gatewayUrl;
     }
 
     /**
@@ -215,5 +198,39 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         } else {
             return 'AU';
         }
+    }
+
+    /**
+     * @param $parameters
+     */
+
+    public static function logContent($parameters){
+        Logger::setup() || Logger::info($parameters);
+    }
+
+    /**
+     * @param $checkoutUrl
+     * @param $payload
+     * @return string
+     * @throws Exception
+     */
+    protected function postToCheckoutTemplate($checkoutUrl, $payload)
+    {
+
+        try {
+            $formItem = '';
+            $beforeForm = sprintf("%s", "<html> <body> <form id='form' action='$checkoutUrl' method='post'>");
+            foreach ($payload as $key => $value) {
+                $formItem = sprintf("%s %s", $formItem, sprintf("<input type='hidden' id='%s' name='%s' value='%s'/>", $key, $key, htmlspecialchars($value, ENT_QUOTES)));
+            }
+            $afterForm = sprintf("%s", '</form> </body> <script> var form = document.getElementById("form");form.submit();</script></html>');
+            $postForm = sprintf("%s %s %s", $beforeForm, $formItem, $afterForm);
+            self::logContent(sprintf("PostFormTemplate: %s", $postForm));
+            return $postForm;
+        } catch (Exception $e) {
+            self::logContent(sprintf("PostFormErrors=%s", $e->getMessage()));
+            throw new Exception($e->getMessage());
+        }
+
     }
 }
