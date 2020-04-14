@@ -34,8 +34,7 @@ class Humm
      */
     public static function bootstrap()
     {
-        $HummLogger = new Logger();
-        $HummLogger::setup();
+        Logger::setup();
     }
 
 }

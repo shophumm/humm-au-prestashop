@@ -25,19 +25,34 @@
  */
 
 require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
+require_once( dirname( __FILE__ ) . '/../../HummClasses/Helper/Logger.php' );
+
 
 class HummprestashopRedirectModuleFrontController extends ModuleFrontController {
     /**
      * Do whatever you have to before redirecting the customer on the website of your payment processor.
      */
+    const URLS = [
+        'AU' => [
+            'sandboxURL' => 'https://integration-cart.shophumm.com.au/Checkout?platform=Default',
+            'liveURL' => 'https://cart.shophumm.com.au/Checkout?platform=Default',
+            'sandbox_refund_address' => 'https://integration-buyerapi.shophumm.com.au/api/ExternalRefund/v1/processrefund',
+            'live_refund_address' => 'https://buyerapi.shophumm.com.au/api/ExternalRefund/v1/processrefund',
+        ],
+        'NZ_Oxipay' => [
+            'sandboxURL' => 'https://securesandbox.oxipay.co.nz/Checkout?platform=Default',
+            'liveURL' => 'https://secure.oxipay.co.nz/Checkout?platform=Default',
+            'sandbox_refund_address' => 'https://portalssandbox.oxipay.co.nz/api/ExternalRefund/processrefund',
+            'live_refund_address' => 'https://portals.oxipay.co.nz/api/ExternalRefund/processrefund',
+        ],
+        'NZ_Humm' => [
+            'sandboxURL' => 'https://integration-cart.shophumm.co.nz/Checkout?platform=Default',
+            'liveURL' => 'https://cart.shophumm.co.nz/Checkout?platform=Default',
+            'sandbox_refund_address' => 'https://integration-buyerapi.shophumm.co.nz/api/ExternalRefund/v1/processrefund',
+            'live_refund_address' => 'https://buyerapi.shophumm.co.nz/api/ExternalRefund/v1/processrefund',
+        ]
+    ];
     public function postProcess() {
-
-        /**
-         * Oops, an error occured.
-         */
-        // if (Tools::getValue('action') == 'error') {
-        //     return $this->displayError('An error occurred while trying to redirect the customer');
-        // } else {...
 
         $cart                 = $this->context->cart;
         $customer             = new Customer( $cart->id_customer );
@@ -95,9 +110,10 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
         $this->setTemplate( 'module:hummprestashop/views/templates/front/redirect.tpl' );
     }
 
-    protected function getGatewayUrl() {
-        $gatewayUrl = Configuration::get( 'HUMM_GATEWAY_URL' );
-        if ( strtolower( substr( $gatewayUrl, 0, 4 ) ) == 'http' ) {
+    protected function getGatewayUrl()
+    {
+        $gatewayUrl = Configuration::get('HUMM_GATEWAY_URL');
+        if (strtolower(substr($gatewayUrl, 0, 4)) == 'http') {
             return $gatewayUrl;
         }
         $title       = Configuration::get( 'HUMM_TITLE' );
@@ -111,6 +127,9 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'Humm'   => 'cart.shophumm',
             'Oxipay' => 'secure.oxipay'
         );
+
+        $country_domain = $countryCode == 'NZ' ? '.co.nz' : '.com.au';
+
         $gatewayUrl  = 'https://' . ( $isTest ? $domainsTest[ $title ] : $domains[ $title ] ) . ( $countryCode == 'NZ' ? '.co.nz' : '.com.au' ) . '/Checkout?platform=Default';
 
         return $gatewayUrl;
