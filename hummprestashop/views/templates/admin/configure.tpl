@@ -28,12 +28,9 @@
 	<div class="row hummprestashop-header humm-payment-logo">
 		<div class="col-xs-6 col-md-4 text-center">
 			<div class="humm-payment-byline">Little things. Big things. Interest freeee!<br/>Humm Payment</div>
-			{*<h4>{l s='   Online payment processing' mod='hummprestashop'}</h4>*}
-			{*<h4>{l s='Fast - Secure - Reliable' mod='hummprestashop'}</h4>*}
 		</div>
-		<div class="col-xs-12 col-md-4 text-center">
-			<a href="#" onclick="javascript:return false;" class="btn btn-primary" id="create-account-btn">{l s='Create an account now!' mod='hummprestashop'}</a><br />
-			{l s='Already have an account?' mod='hummprestashop'}<a href="#" onclick="javascript:return false;"> {l s='Log in' mod='hummprestashop'}</a>
+		<div class="col-xs-12 col-md-8">
+			<div class="humm-payment-byline">If you don't have a humm merchant account you may join <a href="https://www.shophumm.com.au/sell-with-humm/" target="_blank">here.!</a></div>
 		</div>
 	</div>
 </div>

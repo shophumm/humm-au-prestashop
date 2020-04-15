@@ -610,7 +610,7 @@ class Hummprestashop extends PaymentModule
         }
         $notValid = $this->cartValidationErrors($params['cart']);
         if ($notValid) {
-            \HummClasses\Helper\Logger::setup()||\HummClasses\Helper\Logger::INFO($this->cartValidationErrors($params['cart']));
+            \HummClasses\Helper\Logger::setup() || \HummClasses\Helper\Logger::INFO($this->cartValidationErrors($params['cart']));
         }
 
         $descriptions = array(
@@ -620,7 +620,7 @@ class Hummprestashop extends PaymentModule
 
         $this->smarty->assign(array(
             'description' => $descriptions[Configuration::get('HUMM_TITLE')],
-            'humm_validation_errors'=>$notValid,
+            'humm_validation_errors' => $notValid,
         ));
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name);
@@ -670,7 +670,7 @@ class Hummprestashop extends PaymentModule
 
         if ($cart->getOrderTotal() < floatval(Tools::getAllValues('HUMM_MIN_VALUE'))) {
 
-            $msg =  "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
+            $msg = "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
 
         }
 
@@ -685,13 +685,13 @@ class Hummprestashop extends PaymentModule
         $countryCode = Configuration::get('HUMM_COUNTRY');
 
         if ($billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[$countryCode]) {
-            $msg = $msg. "Sorry doesn't support billing purchases from outside " . ($countryNames[$countryCode]) . ".";
+            $msg = $msg . "Sorry doesn't support billing purchases from outside " . ($countryNames[$countryCode]) . ".";
         }
 
         if ($shippingCountryIsoCode != $countryCode) {
-            $msg =$msg."Sorry doesn't support purchases shipped outside " . ($countryNames[$countryCode]) . ".";
-         }
-         return $msg;
+            $msg = $msg . "Sorry doesn't support purchases shipped outside " . ($countryNames[$countryCode]) . ".";
+        }
+        return $msg;
     }
 
     /**
