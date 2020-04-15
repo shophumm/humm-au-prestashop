@@ -56,9 +56,6 @@ class Logger
 
             self::$fileLogger->setFilename(self::$filePath . self::$fileName);
         }
-        else {
-            self::info("log is built in ".self::$filePath);
-        }
     }
 
 
