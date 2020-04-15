@@ -778,4 +778,20 @@ class Hummprestashop extends PaymentModule
             return $this->display(__FILE__, 'views/templates/hooks/product_widget.tpl');
         };
     }
+
+    /**
+     * @param $param
+     * @return string
+     * @throws Exception
+     */
+
+    public function hookdisplayCheckoutSummaryTop($param)
+    {
+        if (Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE')) {
+            $this->smarty->assign(array(
+                'productPrice' => $this->context->cart->getOrderTotal(true)
+            ));
+            return $this->display(__FILE__, 'views/templates/hooks/product_widget.tpl');
+        };
+    }
 }
