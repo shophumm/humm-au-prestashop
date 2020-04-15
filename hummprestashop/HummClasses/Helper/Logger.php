@@ -72,9 +72,8 @@ class Logger
             return false;
         }
 
-        $configLevel = (\Tools::getValue('HUMM_LOGGING', \Configuration::get('HUMM_LOGGING')));
+        $configLevel = (\Tools::getValue('HUMM_LOG', \Configuration::get('HUMM_LOG')));
 
-        $configLevel = 1;
 
         if (!$overideConfig) { // You can use this variable to log regardless of config settings.
             if (!$configLevel) {

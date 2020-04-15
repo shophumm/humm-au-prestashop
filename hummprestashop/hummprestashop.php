@@ -124,6 +124,7 @@ class Hummprestashop extends PaymentModule
         Configuration::deleteByName('HUMM_TITLE');
         Configuration::deleteByName('HUMM_COUNTRY');
         Configuration::deleteByName('HUMM_TEST');
+        Configuration::deleteByName('HUMM_LOG');
         Configuration::deleteByName('HUMM_GATEWAY_URL');
         Configuration::deleteByName('HUMM_MERCHANT_ID');
         Configuration::deleteByName('HUMM_FORCE_HUMM');
@@ -210,6 +211,7 @@ class Hummprestashop extends PaymentModule
         Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
         Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
         Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
+        Configuration::updateValue('HUMM_LOG', Tools::getValue('HUMM_LOG'));
         Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
         Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
         Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
@@ -265,6 +267,7 @@ class Hummprestashop extends PaymentModule
             'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
             'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
             'HUMM_TEST' => Configuration::get('HUMM_TEST'),
+            'HUMM_LOG' => Configuration::get('HUMM_LOG'),
             'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
             'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
             'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
@@ -356,6 +359,21 @@ class Hummprestashop extends PaymentModule
                         'type' => 'select',
                         'label' => $this->l('FORCE HUMM'),
                         'name' => 'HUMM_FORCE_HUMM',
+                        'required' => true,
+                        'options' => array(
+                            'query' => array(
+                                array('id' => '1', 'name' => 'Yes'),
+                                array('id' => '0', 'name' => 'No'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('HUMM LOG'),
+                        'name' => 'HUMM_LOG',
                         'required' => true,
                         'options' => array(
                             'query' => array(
