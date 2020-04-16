@@ -209,6 +209,14 @@ class Hummprestashop extends PaymentModule {
     }
 
     /**
+     *
+     */
+    public function hookDisplayBackOfficeHeader()
+    {
+        $this->context->controller->addCSS($this->_path . 'views/css/back.css', 'all');
+    }
+
+    /**
      * Create the structure of the configuration form.
      */
     protected function getConfigForm() {

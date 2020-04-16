@@ -25,3 +25,34 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
+.humm-payment-logo {
+    height: 100px;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-image: url(../img/bird-humm.svg);
+}
+
+.section-config.with-button.humm-payment-section .config-heading strong {
+    font-weight: normal;
+}
+
+.complex.humm-payment-section .button-container {
+    float: right;
+}
+
+.humm-payment-byline {
+    padding: 10px;
+    color: goldenrod;
+    font-size: 15px;
+    margin-left: 30%;
+    display: inline-block;
+    vertical-align: middle;
+    width: 50%;
+}
+
+.simplepath-wrapper-set.active .admin__collapsible-block {
+    display: none;
+}
+
+.humm-payment-section.section-config.active > .admin__collapsible-block + input + fieldset {
+    margin-left: 40px;
+}
