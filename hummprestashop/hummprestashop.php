@@ -54,6 +54,10 @@ class Hummprestashop extends PaymentModule {
         $this->limited_currencies = array( 'AUD', 'NZD' );
 
         $this->ps_versions_compliancy = array( 'min' => '1.6', 'max' => '1.6.99.99' );
+        $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
+//        $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
+
+//        \HummClasses\Humm::bootstrap();
     }
 
     /**
@@ -72,6 +76,21 @@ class Hummprestashop extends PaymentModule {
         Configuration::updateValue( 'HUMM_TITLE', 'Humm' );
         Configuration::updateValue( 'HUMM_DESCRIPTION', 'Breathe easy with humm, an interest-free installment payment plan.' );
 
+
+        if (version_compare(_PS_VERSION_, '1.5', '>=') &&
+            (
+                !$this->registerHook('displayHeader') ||
+                !$this->registerHook('displayTop') ||
+                !$this->registerHook('displayFooter') ||
+                !$this->registerHook('displayProductButtons') ||
+                !$this->registerHook('displayProductPriceBlock') ||
+                !$this->registerHook('displayCheckoutSummaryTop') ||
+                !$this->registerHook('displayShoppingCartFooter')
+            )
+        ) {
+            return false;
+        }
+
         return parent::install() &&
                $this->registerHook( 'header' ) &&
                $this->registerHook( 'backOfficeHeader' ) &&
@@ -81,13 +100,20 @@ class Hummprestashop extends PaymentModule {
                $this->registerHook( 'displayPaymentReturn' );
     }
 
-    public function uninstall() {
-        Configuration::deleteByName( 'HUMM_TITLE' );
-        Configuration::deleteByName( 'HUMM_COUNTRY' );
-        Configuration::deleteByName( 'HUMM_TEST' );
-        Configuration::deleteByName( 'HUMM_GATEWAY_URL' );
-        Configuration::deleteByName( 'HUMM_MERCHANT_ID' );
-        Configuration::deleteByName( 'HUMM_API_KEY' );
+    public function uninstall()
+    {
+        Configuration::deleteByName('HUMM_TITLE');
+        Configuration::deleteByName('HUMM_COUNTRY');
+        Configuration::deleteByName('HUMM_TEST');
+        Configuration::deleteByName('HUMM_LOG');
+        Configuration::deleteByName('HUMM_GATEWAY_URL');
+        Configuration::deleteByName('HUMM_MERCHANT_ID');
+        Configuration::deleteByName('HUMM_FORCE_HUMM');
+        Configuration::deleteByName('HUMM_MIN_ORDER');
+        Configuration::deleteByName('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE');
+        Configuration::deleteByName('HUMM_DISPLAY_WIDGET_CARTPAGE');
+        Configuration::deleteByName('HUMM_DISPLAY_BANNER_CARTPAG');
+        Configuration::deleteByName('HUMM_DISPLAY_BANNER_HOMEPAGE');
 
         return parent::uninstall();
     }
@@ -179,91 +205,299 @@ class Hummprestashop extends PaymentModule {
             'id_language'  => $this->context->language->id,
         );
 
-        return $helper->generateForm( array( $this->getConfigForm() ) );
+        return $helper->generateForm(array($this->getConfigForm(), $this->getConfigWidgetForm()));
     }
 
     /**
      * Create the structure of the configuration form.
      */
     protected function getConfigForm() {
+        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
+        $minimumAmountField = $pre16 ?
+            array(
+                'type' => 'text',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'placeholder' => '0'
+            ) :
+            array(
+                'type' => 'html',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'size' => 32,
+                'required' => true,
+                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+            );
         return array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l( 'Settings' ),
-                    'icon'  => 'icon-cogs',
+                    'title' => $this->l('Settings'),
+                    'icon' => 'icon-cogs',
                 ),
-                'input'  => array(
+                'input' => array(
                     array(
-                        'type'     => 'select',
-                        'label'    => $this->l( 'Checkout Method' ),
-                        'name'     => 'HUMM_TITLE',
+                        'type' => 'select',
+                        'label' => $this->l('Checkout Method'),
+                        'name' => 'HUMM_TITLE',
                         'required' => true,
-                        'options'  => array(
+                        'options' => array(
                             'query' => array(
-                                array( 'id' => 'Oxipay', 'name' => 'Oxipay' ),
-                                array( 'id' => 'Humm', 'name' => 'Humm' ),
+                                array('id' => 'Oxipay', 'name' => 'Oxipay'),
+                                array('id' => 'Humm', 'name' => 'Humm'),
                             ),
-                            'id'    => 'id',
-                            'name'  => 'name',
+                            'id' => 'id',
+                            'name' => 'name',
                         ),
                     ),
                     array(
-                        'type'     => 'select',
-                        'label'    => $this->l( 'Country' ),
-                        'name'     => 'HUMM_COUNTRY',
+                        'type' => 'select',
+                        'label' => $this->l('Country'),
+                        'name' => 'HUMM_COUNTRY',
                         'required' => true,
-                        'options'  => array(
+                        'options' => array(
                             'query' => array(
-                                array( 'id' => 'AU', 'name' => 'Australia' ),
-                                array( 'id' => 'NZ', 'name' => 'New Zealand' ),
+                                array('id' => 'AU', 'name' => 'Australia'),
+                                array('id' => 'NZ', 'name' => 'New Zealand'),
                             ),
-                            'id'    => 'id',
-                            'name'  => 'name',
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+                    $minimumAmountField,
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('Is Test?'),
+                        'name' => 'HUMM_TEST',
+                        'required' => true,
+                        'options' => array(
+                            'query' => array(
+                                array('id' => '1', 'name' => 'Yes'),
+                                array('id' => '0', 'name' => 'No'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
                         ),
                     ),
                     array(
-                        'type'     => 'select',
-                        'label'    => $this->l( 'Is Test?' ),
-                        'name'     => 'HUMM_TEST',
+                        'type' => 'select',
+                        'label' => $this->l('FORCE HUMM'),
+                        'name' => 'HUMM_FORCE_HUMM',
                         'required' => true,
-                        'options'  => array(
+                        'options' => array(
                             'query' => array(
-                                array( 'id' => '1', 'name' => 'Yes' ),
-                                array( 'id' => '0', 'name' => 'No' ),
+                                array('id' => '1', 'name' => 'Yes'),
+                                array('id' => '0', 'name' => 'No'),
                             ),
-                            'id'    => 'id',
-                            'name'  => 'name',
+                            'id' => 'id',
+                            'name' => 'name',
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'select',
+                        'label' => $this->l('HUMM LOG'),
+                        'name' => 'HUMM_LOG',
+                        'required' => true,
+                        'options' => array(
+                            'query' => array(
+                                array('id' => '1', 'name' => 'Yes'),
+                                array('id' => '0', 'name' => 'No'),
+                            ),
+                            'id' => 'id',
+                            'name' => 'name',
                         ),
                     ),
                     array(
-                        'type'   => 'text',
-                        'label'  => $this->l( 'Gateway URL' ),
+                        'type' => 'text',
+                        'label' => $this->l('Gateway URL'),
                         'prefix' => '<i class="icon icon-globe"></i>',
-                        'name'   => 'HUMM_GATEWAY_URL',
-                        'desc'   => $this->l( 'This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.' )
+                        'name' => 'HUMM_GATEWAY_URL',
+                        'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
                     ),
+
                     array(
-                        'type'     => 'text',
-                        'label'    => $this->l( 'Merchant ID' ),
-                        'prefix'   => '<i class="icon icon-user"></i>',
-                        'name'     => 'HUMM_MERCHANT_ID',
-                        'desc'     => $this->l( 'This is the unique number that identifies you as a merchant to the humm Payment Gateway.' ),
+                        'type' => 'text',
+                        'label' => $this->l('Merchant ID'),
+                        'prefix' => '<i class="icon icon-user"></i>',
+                        'name' => 'HUMM_MERCHANT_ID',
+                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
                         'required' => true
                     ),
                     array(
-                        'type'     => 'password',
-                        'label'    => $this->l( 'API Key' ),
-                        'prefix'   => '<i class="icon icon-key"></i>',
-                        'name'     => 'HUMM_API_KEY',
-                        'desc'     => $this->l( 'This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.' ),
+                        'type' => 'password',
+                        'label' => $this->l('API Key'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'name' => 'HUMM_API_KEY',
+                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
                         'required' => true
                     ),
-                ),
-                'submit' => array(
-                    'title' => $this->l( 'Save' ),
                 ),
             ),
         );
+    }
+
+    /**
+     * @return array
+     */
+
+    protected function getConfigWidgetForm()
+    {
+        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
+        $switch_type = $pre16 ? 'radio' : 'switch';
+
+        $fields_form_customization = array(
+            'form' => array(
+                'legend' => array(
+                    'title' => $this->l('Widgets', array(), 'Modules.HummPayment.Admin'),
+                    'icon' => 'icon-cogs'
+                ),
+                'input' => array(
+                    array(
+                        'type' => 'label',
+                        'label' => $this->l('Home Page'),
+                        'lang' => true
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Banner'),
+                        'name' => "HUMM_DISPLAY_BANNER_HOMEPAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+
+                    array(
+                        'type' => 'label',
+                        'label' => $this->trans('Product Page'),
+                        'lang' => true
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Strip Banner'),
+                        'name' => "HUMM_DISPLAY_BANNER_PRODUCTPAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Widget'),
+                        'name' => "HUMM_DISPLAY_WIDGET_PRODUCTPAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+                    array(
+                        'type' => 'label',
+                        'label' => $this->trans('Cart Page'),
+                        'lang' => true
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Strip Banner'),
+                        'name' => "HUMM_DISPLAY_BANNER_CARTPAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Widget'),
+                        'name' => "HUMM_DISPLAYT_WIDGET_CARTPAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+                    array(
+                        'type' => 'label',
+                        'label' => $this->trans('Category Page'),
+                        'lang' => true
+                    ),
+                    array(
+                        'type' => $switch_type,
+                        'label' => $this->l('Display Strip Banner'),
+                        'name' => "HUMM_DIAPLAY_BANNER_CATEGORY_PAGE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
+                        ),
+                    ),
+
+
+                ),
+                'submit' => array(
+                    'title' => $this->l('Save'),
+                ),
+            ),
+        );
+        return $fields_form_customization;
     }
 
     /**
@@ -285,18 +519,25 @@ class Hummprestashop extends PaymentModule {
      */
     protected function postProcess() {
         //save the values for the rest of the configuration properties
-        Configuration::updateValue( 'HUMM_TITLE', Tools::getValue( 'HUMM_TITLE' ) );
-        Configuration::updateValue( 'HUMM_COUNTRY', Tools::getValue( 'HUMM_COUNTRY' ) );
-        Configuration::updateValue( 'HUMM_TEST', Tools::getValue( 'HUMM_TEST' ) );
-        Configuration::updateValue( 'HUMM_GATEWAY_URL', Tools::getValue( 'HUMM_GATEWAY_URL' ) );
-        Configuration::updateValue( 'HUMM_MERCHANT_ID', Tools::getValue( 'HUMM_MERCHANT_ID' ) );
-        $apiKey = strval( Tools::getValue( 'HUMM_API_KEY' ) );
-        if ( $apiKey ) {
-            //it seems that the 'password' type input fields were designed only to
-            //change a password; they never display anything.
+        Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
+        Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
+        Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
+        Configuration::updateValue('HUMM_LOG', Tools::getValue('HUMM_LOG'));
+        Configuration::updateValue('HUMM_GATEWAY_URL', Tools::getValue('HUMM_GATEWAY_URL'));
+        Configuration::updateValue('HUMM_MERCHANT_ID', Tools::getValue('HUMM_MERCHANT_ID'));
+        Configuration::updateValue('HUMM_MIN_ORDER', Tools::getValue('HUMM_MIN_ORDER'));
+        Configuration::updateValue('HUMM_FORCE_HUMM', Tools::getValue('HUMM_FORCE_HUMM'));
+        Configuration::updateValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', Tools::getValue('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'));
+        Configuration::updateValue('HUMM_DISPLAYT_WIDGET_CARTPAGE', Tools::getValue('HUMM_DISPLAYT_WIDGET_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_CARTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_CARTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_HOMEPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_HOMEPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_BANNER_PRODUCTPAGE'));
+        Configuration::updateValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE', Tools::getValue('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
+
+        $apiKey = strval(Tools::getValue('HUMM_API_KEY'));
+        if ($apiKey) {
             //https://www.prestashop.com/forums/topic/347850-possible-bug-with-helperform-and-password-type-fields/
-            //only save if a value was entered
-            Configuration::updateValue( 'HUMM_API_KEY', $apiKey );
+            Configuration::updateValue('HUMM_API_KEY', $apiKey);
         }
     }
 

@@ -55,7 +55,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'x_url_cancel'                 => $this->context->link->getPageLink( 'order', true, null, "step=3" ),
             'x_shop_name'                  => Configuration::get( 'PS_SHOP_NAME' ),
             'x_shop_country'               => $iso_code = Country::getIsoById( Configuration::get( 'PS_COUNTRY_DEFAULT' ) ),
-            'x_account_id'                 => Configuration::get( 'HUMM_MERCHANT_ID' ),
+            'x_account_id'                 => trim(Configuration::get( 'HUMM_MERCHANT_ID' )),
             'x_reference'                  => "{$cart->id}-{$customer->secure_key}",
             'x_invoice'                    => $cart->id,
             'x_amount'                     => $cart->getOrderTotal( true, Cart::BOTH ),
@@ -91,7 +91,6 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController 
             'form_query'    => $this->generate_processing_form( $this->getGatewayUrl(), $query ),
             'this_path_ssl' => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ) );
-
         return $this->setTemplate( 'redirect.tpl' );
     }
 
