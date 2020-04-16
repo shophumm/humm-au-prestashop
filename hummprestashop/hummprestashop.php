@@ -381,7 +381,7 @@ class Hummprestashop extends PaymentModule {
 
                     array(
                         'type' => 'label',
-                        'label' => $this->trans('Product Page'),
+                        'label' => $this->l('Product Page'),
                         'lang' => true
                     ),
                     array(
@@ -424,7 +424,7 @@ class Hummprestashop extends PaymentModule {
                     ),
                     array(
                         'type' => 'label',
-                        'label' => $this->trans('Cart Page'),
+                        'label' => $this->l('Cart Page'),
                         'lang' => true
                     ),
                     array(
@@ -467,7 +467,7 @@ class Hummprestashop extends PaymentModule {
                     ),
                     array(
                         'type' => 'label',
-                        'label' => $this->trans('Category Page'),
+                        'label' => $this->l('Category Page'),
                         'lang' => true
                     ),
                     array(
@@ -505,12 +505,21 @@ class Hummprestashop extends PaymentModule {
      */
     protected function getConfigFormValues() {
         return array(
-            'HUMM_TITLE'       => Configuration::get( 'HUMM_TITLE' ),
-            'HUMM_COUNTRY'     => Configuration::get( 'HUMM_COUNTRY' ),
-            'HUMM_TEST'        => Configuration::get( 'HUMM_TEST' ),
-            'HUMM_GATEWAY_URL' => Configuration::get( 'HUMM_GATEWAY_URL' ),
-            'HUMM_MERCHANT_ID' => Configuration::get( 'HUMM_MERCHANT_ID' ),
-            'HUMM_API_KEY'     => Configuration::get( 'HUMM_API_KEY' ),
+            'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
+            'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
+            'HUMM_TEST' => Configuration::get('HUMM_TEST'),
+            'HUMM_LOG' => Configuration::get('HUMM_LOG'),
+            'HUMM_GATEWAY_URL' => Configuration::get('HUMM_GATEWAY_URL'),
+            'HUMM_MERCHANT_ID' => Configuration::get('HUMM_MERCHANT_ID'),
+            'HUMM_API_KEY' => Configuration::get('HUMM_API_KEY'),
+            'HUMM_MIN_ORDER' => Configuration::get('HUMM_MIN_ORDER'),
+            'HUMM_FORCE_HUMM' => Configuration::get('HUMM_FORCE_HUMM'),
+            'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE' => Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE'),
+            'HUMM_DISPLAYT_WIDGET_CARTPAGE' => Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_CARTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_CARTPAGE'),
+            'HUMM_DISPLAY_BANNER_HOMEPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE'),
+            'HUMM_DISPLAY_BANNER_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE'),
+            'HUMM_DISPLAY_WIDGET_PRODUCTPAGE' => Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE'),
         );
     }
 
