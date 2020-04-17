@@ -24,18 +24,23 @@
  *  International Registered Trademark & Property of PrestaShop SA
  */
 
-if ( ! defined( '_PS_VERSION_' ) ) {
+if (!defined('_PS_VERSION_')) {
     exit;
 }
 
-require_once( dirname( __FILE__ ) . '/common/HummCommon.php' );
+require_once(dirname(__FILE__) . '/common/HummCommon.php');
+require_once(dirname(__FILE__) . '/HummClasses/HummWidgets.php');
+require_once(dirname(__FILE__) . '/HummClasses/Humm.php');
 
-class Hummprestashop extends PaymentModule {
-    public function __construct() {
-        $this->name          = 'hummprestashop';
-        $this->tab           = 'payments_gateways';
-        $this->version       = HummCommon::HUMM_PLUGIN_VERSION;
-        $this->author        = 'Humm';
+
+class Hummprestashop extends PaymentModule
+{
+    public function __construct()
+    {
+        $this->name = 'hummprestashop';
+        $this->tab = 'payments_gateways';
+        $this->version = HummCommon::HUMM_PLUGIN_VERSION;
+        $this->author = 'Humm';
         $this->need_instance = 0;
 
         /**
@@ -45,59 +50,50 @@ class Hummprestashop extends PaymentModule {
 
         parent::__construct();
 
-        $this->displayName = $this->l( 'Humm prestashop' );
-        $this->description = $this->l( 'Accept payments for your products via humm.' );
+        $this->displayName = $this->l('Humm prestashop');
+        $this->description = $this->l('Accept payments for your products via humm.');
 
-        $this->confirmUninstall = $this->l( 'Are you sure you want to uninstall the humm module?' );
+        $this->confirmUninstall = $this->l('Are you sure you want to uninstall the humm module?');
 
-        $this->limited_countries  = array( 'AU', 'NZ' );
-        $this->limited_currencies = array( 'AUD', 'NZD' );
+        $this->limited_countries = array('AU', 'NZ');
+        $this->limited_currencies = array('AUD', 'NZD');
 
-        $this->ps_versions_compliancy = array( 'min' => '1.6', 'max' => '1.6.99.99' );
+        $this->ps_versions_compliancy = array('min' => '1.6', 'max' => '1.6.99.99');
         $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
-//        $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
+        $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
 
-//        \HummClasses\Humm::bootstrap();
+        \HummClasses\Humm::bootstrap();
     }
 
     /**
      * If we need to create update methods: http://doc.prestashop.com/display/PS16/Enabling+the+Auto-Update
      */
-    public function install() {
-        $iso_code = Country::getIsoById( Configuration::get( 'PS_COUNTRY_DEFAULT' ) );
+    public function install()
+    {
+        $iso_code = Country::getIsoById(Configuration::get('PS_COUNTRY_DEFAULT'));
 
-        if ( in_array( $iso_code, $this->limited_countries ) == false ) {
-            $this->_errors[] = $this->l( 'This module is not available in your country' );
+        if (in_array($iso_code, $this->limited_countries) == false) {
+            $this->_errors[] = $this->l('This module is not available in your country');
 
             return false;
         }
 
         //Default values
-        Configuration::updateValue( 'HUMM_TITLE', 'Humm' );
-        Configuration::updateValue( 'HUMM_DESCRIPTION', 'Breathe easy with humm, an interest-free installment payment plan.' );
-
-
-        if (version_compare(_PS_VERSION_, '1.5', '>=') &&
-            (
-                !$this->registerHook('displayHeader') ||
-                !$this->registerHook('displayTop') ||
-                !$this->registerHook('displayFooter') ||
-                !$this->registerHook('displayProductButtons') ||
-                !$this->registerHook('displayProductPriceBlock') ||
-                !$this->registerHook('displayCheckoutSummaryTop') ||
-                !$this->registerHook('displayShoppingCartFooter')
-            )
-        ) {
-            return false;
-        }
+        Configuration::updateValue('HUMM_TITLE', 'Humm');
+        Configuration::updateValue('HUMM_DESCRIPTION', 'Breathe easy with humm, an interest-free installment payment plan.');
 
         return parent::install() &&
-               $this->registerHook( 'header' ) &&
-               $this->registerHook( 'backOfficeHeader' ) &&
-               $this->registerHook( 'payment' ) && //this is an alias for displayPayment ('payment' is deprecated)
-               $this->registerHook( 'paymentReturn' ) && // this is an alias for displayPaymentReturn ('paymentReturn' is deprecated)
-               $this->registerHook( 'displayPayment' ) &&
-               $this->registerHook( 'displayPaymentReturn' );
+            $this->registerHook('displayTop') &&
+            $this->registerHook('displayShoppingCartFooter') &&
+            $this->registerHook('displayCheckoutSummaryTop') &&
+            $this->registerHook('displayHeader') &&
+            $this->registerHook('displayProductPriceBlock') &&
+            $this->registerHook('header') &&
+            $this->registerHook('backOfficeHeader') &&
+            $this->registerHook('payment') && //this is an alias for displayPayment ('payment' is deprecated)
+            $this->registerHook('paymentReturn') && // this is an alias for displayPaymentReturn ('paymentReturn' is deprecated)
+            $this->registerHook('displayPayment') &&
+            $this->registerHook('displayPaymentReturn');
     }
 
     public function uninstall()
@@ -118,24 +114,25 @@ class Hummprestashop extends PaymentModule {
         return parent::uninstall();
     }
 
-    protected function _postValidation() {
+    protected function _postValidation()
+    {
         /**
          * If values have been submitted in the form, process.
          */
         $postErrors = array();
-        if ( ( (bool) Tools::isSubmit( 'submitHummprestashopModule' ) ) == true ) {
-            if ( ! Tools::getValue( 'HUMM_TITLE' ) ) {
-                $postErrors[] = $this->l( 'Checkout Method is required.' );
+        if (((bool)Tools::isSubmit('submitHummprestashopModule')) == true) {
+            if (!Tools::getValue('HUMM_TITLE')) {
+                $postErrors[] = $this->l('Checkout Method is required.');
             }
-            if ( is_null( Tools::getValue( 'HUMM_TEST' ) ) ) {
-                $postErrors[] = $this->l( 'Is Test? is required.' );
+            if (is_null(Tools::getValue('HUMM_TEST'))) {
+                $postErrors[] = $this->l('Is Test? is required.');
             }
-            if ( ! Tools::getValue( 'HUMM_MERCHANT_ID' ) ) {
-                $postErrors[] = $this->l( 'Merchant ID is required.' );
+            if (!Tools::getValue('HUMM_MERCHANT_ID')) {
+                $postErrors[] = $this->l('Merchant ID is required.');
             }
-            if ( ! Tools::getValue( 'HUMM_API_KEY' ) && ! Configuration::get( 'HUMM_API_KEY' ) ) //read comment in postProcess() about the particularity of 'password' type input fields
+            if (!Tools::getValue('HUMM_API_KEY') && !Configuration::get('HUMM_API_KEY')) //read comment in postProcess() about the particularity of 'password' type input fields
             {
-                $postErrors[] = $this->l( 'API Key is required.' );
+                $postErrors[] = $this->l('API Key is required.');
             }
         }
 
@@ -145,36 +142,37 @@ class Hummprestashop extends PaymentModule {
     /**
      * Load the configuration form
      */
-    public function getContent() {
+    public function getContent()
+    {
         /**
          * If the 'Delete' image button was pressed
          */
-        if ( Tools::isSubmit( 'delete_logo' ) && Tools::getValue( 'delete_logo' ) ) {
-            unlink( $this->_path . '/images/' . Configuration::get( 'HUMM_LOGO' ) );
-            Configuration::updateValue( 'HUMM_LOGO', '' );
-            Tools::redirectAdmin( $this->context->link->getAdminLink( 'AdminModules', true ) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name );
+        if (Tools::isSubmit('delete_logo') && Tools::getValue('delete_logo')) {
+            unlink($this->_path . '/images/' . Configuration::get('HUMM_LOGO'));
+            Configuration::updateValue('HUMM_LOGO', '');
+            Tools::redirectAdmin($this->context->link->getAdminLink('AdminModules', true) . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name);
         }
 
         /**
          * If values have been submitted in the form ('Save' button), process.
          */
         $html = '';
-        if ( ( (bool) Tools::isSubmit( 'submitHummprestashopModule' ) ) == true ) {
+        if (((bool)Tools::isSubmit('submitHummprestashopModule')) == true) {
             $postErrors = $this->_postValidation();
             $this->postProcess(); //we still want to save the correct settings, otherwise they'll be lost the first time
-            if ( ! count( $postErrors ) ) {
-                $html .= $this->displayConfirmation( $this->l( 'Humm settings updated.' ) );
+            if (!count($postErrors)) {
+                $html .= $this->displayConfirmation($this->l('Humm settings updated.'));
             } else {
-                foreach ( $postErrors as $err ) {
-                    $html .= $this->displayError( $err );
+                foreach ($postErrors as $err) {
+                    $html .= $this->displayError($err);
                 }
             }
         } else {
             $html .= '<br />';
         }
 
-        $this->context->smarty->assign( 'module_dir', $this->_path );
-        $output = $this->context->smarty->fetch( $this->local_path . 'views/templates/admin/configure.tpl' );
+        $this->context->smarty->assign('module_dir', $this->_path);
+        $output = $this->context->smarty->fetch($this->local_path . 'views/templates/admin/configure.tpl');
 
         $html .= $output . $this->renderForm();
 
@@ -184,25 +182,26 @@ class Hummprestashop extends PaymentModule {
     /**
      * Create the form that will be displayed in the configuration of the module.
      */
-    protected function renderForm() {
+    protected function renderForm()
+    {
         $helper = new HelperForm();
 
-        $helper->show_toolbar             = false;
-        $helper->table                    = $this->table;
-        $helper->module                   = $this;
-        $helper->default_form_language    = $this->context->language->id;
-        $helper->allow_employee_form_lang = Configuration::get( 'PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0 );
+        $helper->show_toolbar = false;
+        $helper->table = $this->table;
+        $helper->module = $this;
+        $helper->default_form_language = $this->context->language->id;
+        $helper->allow_employee_form_lang = Configuration::get('PS_BO_ALLOW_EMPLOYEE_FORM_LANG', 0);
 
-        $helper->identifier    = $this->identifier;
+        $helper->identifier = $this->identifier;
         $helper->submit_action = 'submitHummprestashopModule';
-        $helper->currentIndex  = $this->context->link->getAdminLink( 'AdminModules', false )
-                                 . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
-        $helper->token         = Tools::getAdminTokenLite( 'AdminModules' );
+        $helper->currentIndex = $this->context->link->getAdminLink('AdminModules', false)
+            . '&configure=' . $this->name . '&tab_module=' . $this->tab . '&module_name=' . $this->name;
+        $helper->token = Tools::getAdminTokenLite('AdminModules');
 
         $helper->tpl_vars = array(
             'fields_value' => $this->getConfigFormValues(), /* Add values for our inputs */
-            'languages'    => $this->context->controller->getLanguages(),
-            'id_language'  => $this->context->language->id,
+            'languages' => $this->context->controller->getLanguages(),
+            'id_language' => $this->context->language->id,
         );
 
         return $helper->generateForm(array($this->getConfigForm(), $this->getConfigWidgetForm()));
@@ -219,7 +218,8 @@ class Hummprestashop extends PaymentModule {
     /**
      * Create the structure of the configuration form.
      */
-    protected function getConfigForm() {
+    protected function getConfigForm()
+    {
         $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
         $minimumAmountField = $pre16 ?
             array(
@@ -511,7 +511,8 @@ class Hummprestashop extends PaymentModule {
     /**
      * Set values for the inputs.
      */
-    protected function getConfigFormValues() {
+    protected function getConfigFormValues()
+    {
         return array(
             'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
             'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
@@ -534,7 +535,8 @@ class Hummprestashop extends PaymentModule {
     /**
      * Save form data.
      */
-    protected function postProcess() {
+    protected function postProcess()
+    {
         //save the values for the rest of the configuration properties
         Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
         Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
@@ -561,74 +563,80 @@ class Hummprestashop extends PaymentModule {
     /**
      * Add the CSS & JavaScript files you want to be loaded in the BO.
      */
-    public function hookBackOfficeHeader() {
-        if ( Tools::getValue( 'module_name' ) == $this->name ) {
-            $this->context->controller->addJS( $this->_path . 'views/js/back.js' );
-            $this->context->controller->addCSS( $this->_path . 'views/css/back.css' );
+    public function hookBackOfficeHeader()
+    {
+        if (Tools::getValue('module_name') == $this->name) {
+            $this->context->controller->addJS($this->_path . 'views/js/back.js');
+            $this->context->controller->addCSS($this->_path . 'views/css/back.css');
         }
     }
 
     /**
      * Add the CSS & JavaScript files you want to be added on the FO.
      */
-    public function hookHeader() {
-        $this->context->controller->addJS( $this->_path . '/views/js/front.js' );
-        $this->context->controller->addCSS( $this->_path . '/views/css/front.css' );
+    public function hookHeader()
+    {
+        $this->context->controller->addJS($this->_path . '/views/js/front.js');
+        $this->context->controller->addCSS($this->_path . '/views/css/front.css');
     }
 
     /**
      * This method is used to render the payment button,
      * Take care if the button should be displayed or not.
      */
-    public function hookPayment( $params ) {
-        return $this->hookDisplayPayment( $params );
+    public function hookPayment($params)
+    {
+        return $this->hookDisplayPayment($params);
     }
 
     /**
      * This hook is used to display the order confirmation page.
      */
-    public function hookPaymentReturn( $params ) {
-        return $this->hookDisplayPaymentReturn( $params );
+    public function hookPaymentReturn($params)
+    {
+        return $this->hookDisplayPaymentReturn($params);
     }
 
-    public function hookDisplayPayment( $params ) {
-        $cart          = $params['cart'];
+    public function hookDisplayPayment($params)
+    {
+        $cart = $params['cart'];
         $config_values = $this->getConfigFormValues();
 
         $descriptions = array(
             'Oxipay' => 'Breathe easy with Oxipay, an interest-free installment payment plan.',
-            'Humm'   => 'Pay in slices. No interest ever.'
+            'Humm' => 'Pay in slices. No interest ever.'
         );
 
-        $this->smarty->assign( array(
-            'humm_title'             => $config_values['HUMM_TITLE'],
-            'humm_logo'              => strtolower( $config_values['HUMM_TITLE'] ),
-            'humm_description'       => $descriptions[ $config_values['HUMM_TITLE'] ],
-            'this_path_ssl'          => Tools::getShopDomainSsl( true, true ) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
-            'humm_validation_errors' => $this->cartValidationErrors( $cart )
-        ) );
+        $this->smarty->assign(array(
+            'humm_title' => $config_values['HUMM_TITLE'],
+            'humm_logo' => strtolower($config_values['HUMM_TITLE']),
+            'humm_description' => $descriptions[$config_values['HUMM_TITLE']],
+            'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->name . '/',
+            'humm_validation_errors' => $this->cartValidationErrors($cart)
+        ));
 
-        return $this->display( __FILE__, 'views/templates/hook/payment.tpl' );
+        return $this->display(__FILE__, 'views/templates/hook/payment.tpl');
     }
 
     /**
      * Checks the quote for validity
      * @throws Mage_Api_Exception
      */
-    private function cartValidationErrors( $cart ) {
-        $shippingAddress = new Address( (int) $cart->id_address_delivery );
-        $billingAddress  = new Address( (int) $cart->id_address_invoice );
-        $currency        = new Currency( (int) $cart->id_currency );
+    private function cartValidationErrors($cart)
+    {
+        $shippingAddress = new Address((int)$cart->id_address_delivery);
+        $billingAddress = new Address((int)$cart->id_address_invoice);
+        $currency = new Currency((int)$cart->id_currency);
 
-        $billingCountryIsoCode  = ( new Country( $billingAddress->id_country ) )->iso_code;
-        $shippingCountryIsoCode = ( new Country( $shippingAddress->id_country ) )->iso_code;
-        $currencyIsoCode        = $currency->iso_code;
+        $billingCountryIsoCode = (new Country($billingAddress->id_country))->iso_code;
+        $shippingCountryIsoCode = (new Country($shippingAddress->id_country))->iso_code;
+        $currencyIsoCode = $currency->iso_code;
 
-        if ( $cart->getOrderTotal() < 20 && Configuration::get( 'HUMM_TITLE' ) == 'Oxipay' ) {
+        if ($cart->getOrderTotal() < 20 && Configuration::get('HUMM_TITLE') == 'Oxipay') {
             return " doesn't support purchases less than $20.";
         }
 
-        $countryNames  = array(
+        $countryNames = array(
             'AU' => 'Australia',
             'NZ' => 'New Zealand'
         );
@@ -636,38 +644,39 @@ class Hummprestashop extends PaymentModule {
             'AU' => 'AUD',
             'NZ' => 'NZD'
         );
-        $countryCode   = Configuration::get( 'HUMM_COUNTRY' );
+        $countryCode = Configuration::get('HUMM_COUNTRY');
 
-        if ( $billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[ $countryCode ] ) {
-            return " doesn't support purchases from outside " . ( $countryNames[ $countryCode ] ) . ".";
+        if ($billingCountryIsoCode != $countryCode || $currencyIsoCode != $currencyCodes[$countryCode]) {
+            return " doesn't support purchases from outside " . ($countryNames[$countryCode]) . ".";
         }
 
-        if ( $shippingCountryIsoCode != $countryCode ) {
-            return " doesn't support purchases shipped outside " . ( $countryNames[ $countryCode ] ) . ".";
+        if ($shippingCountryIsoCode != $countryCode) {
+            return " doesn't support purchases shipped outside " . ($countryNames[$countryCode]) . ".";
         }
 
         return "";
     }
 
     //TODO: is this really needed?
-    public function hookDisplayPaymentReturn( $params ) {
-        if ( $this->active == false ) {
+    public function hookDisplayPaymentReturn($params)
+    {
+        if ($this->active == false) {
             return;
         }
 
         $order = $params['objOrder'];
 
-        if ( $order->getCurrentOrderState()->id != Configuration::get( 'PS_OS_ERROR' ) ) {
-            $this->smarty->assign( 'status', 'ok' );
+        if ($order->getCurrentOrderState()->id != Configuration::get('PS_OS_ERROR')) {
+            $this->smarty->assign('status', 'ok');
         }
 
-        $this->smarty->assign( array(
-            'id_order'  => $order->id,
+        $this->smarty->assign(array(
+            'id_order' => $order->id,
             'reference' => $order->reference,
-            'params'    => $params,
-            'total'     => Tools::displayPrice( $params['total_to_pay'], $params['currencyObj'], false ),
-        ) );
+            'params' => $params,
+            'total' => Tools::displayPrice($params['total_to_pay'], $params['currencyObj'], false),
+        ));
 
-        return $this->display( __FILE__, 'views/templates/hook/confirmation.tpl' );
+        return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
 }
