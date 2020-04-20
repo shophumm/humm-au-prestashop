@@ -29,7 +29,9 @@ use HummClasses\Helper\Logger;
 require_once(dirname(__FILE__) . '/../../common/HummCommon.php');
 require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
 
-
+/**
+ * Class HummprestashopRedirectModuleFrontController
+ */
 class HummprestashopRedirectModuleFrontController extends ModuleFrontController
 {
     /**
