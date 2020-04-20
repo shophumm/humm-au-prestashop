@@ -23,7 +23,6 @@ class Logger
 
     /**
      * Logger constructor.
-     * @param $context
      */
     public function __construct()
     {
@@ -166,6 +165,8 @@ class Logger
         if (!self::$fileLogger) {
             self::setup();
         }
+
+        if (\Configuration::get('HUMM_LOG'))
         self::INFO($parameters);
     }
 }
