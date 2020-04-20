@@ -200,11 +200,11 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
 
         try {
             $formItem = '';
-            $beforeForm = sprintf("%s", "<html> <body> <form id='form' action='$checkoutUrl' method='post'>");
+            $beforeForm = sprintf("%s", "<form id='hummload' action='$checkoutUrl' method='post'>");
             foreach ($payload as $key => $value) {
                 $formItem = sprintf("%s %s", $formItem, sprintf("<input type='hidden' id='%s' name='%s' value='%s'/>", $key, $key, htmlspecialchars($value, ENT_QUOTES)));
             }
-            $afterForm = sprintf("%s", '</form> </body> <script> var form = document.getElementById("form");form.submit();</script></html>');
+            $afterForm = sprintf("%s", '</form>');
             $postForm = sprintf("%s %s %s", $beforeForm, $formItem, $afterForm);
             self::logContent(sprintf("PostFormTemplate: %s", $postForm));
             return $postForm;
