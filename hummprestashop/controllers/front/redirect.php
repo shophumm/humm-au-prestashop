@@ -2,7 +2,7 @@
 /**
  *
  */
-use HummClasses\Helper\Logger;
+//use HummClasses\Helper\Logger;
 
 require_once(dirname(__FILE__) . '/../../common/HummCommon.php');
 require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
@@ -95,7 +95,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'form_query' => $this->postToCheckoutTemplate($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-        self::logContent(json_encode($query));
+        self::logContent(sprintf("Before redirect %s ...",json_encode($query)));
         return $this->setTemplate( 'redirect.tpl' );
     }
 
@@ -111,7 +111,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         }
         $title = $this->getTitle();
         $isSandbox = Configuration::get('HUMM_TEST') == 1 ? 'sandboxURL' : 'liveURL';
-        self::logContent(json_encode(self::URLS[$title][$isSandbox]));
+        self::logContent(sprintf("Start Transaction... %s",json_encode(self::URLS[$title][$isSandbox])));
         return self::URLS[$title][$isSandbox];
     }
 
@@ -166,7 +166,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
 
     public static function logContent($parameters)
     {
-        Logger::setup() || Logger::info($parameters);
+        \HummClasses\Helper\Logger::setup() || \HummClasses\Helper\Logger::INFO($parameters);
     }
 
     /**

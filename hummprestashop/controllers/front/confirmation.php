@@ -26,7 +26,7 @@
 
 require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
 require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
-use HummClasses\Helper\Logger;
+//use HummClasses\Helper\Logger;
 
 class HummprestashopConfirmationModuleFrontController extends ModuleFrontController {
     public function postProcess() {
@@ -47,11 +47,12 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             parse_str( $parts, $query );
         }
 
-        self::logContent(sprintf(" Return Query%s",json_encode($query)));
+        self::logContent(sprintf(" End Transaction for Return Query%s",json_encode($query)));
 
         $isValid = HummCommon::isValidSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
 
         if ( ! $isValid ) {
+            self::logContent(sprintf("Signature error "));
             PrestaShopLogger::addLog( 'Possible site forgery detected: invalid response signature.', 1 );
             $this->errors[] = $this->module->l( 'An error occured with the humm payment. Please contact the merchant to have more information' );
 
@@ -108,14 +109,14 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 /**
                  * The order has been placed so we redirect the customer on the confirmation page.
                  */
-
+                self::logContent(sprintf("end transaction %s %s",$order_id,$secure_key));
                 $this->redirectToOrderConfirmationPage( $cart_id, $order_id, $secure_key );
             } else {
                 /**
                  * An error occured and is shown on a new page.
                  */
                 $this->errors[] = $this->module->l( 'An error occured. Please contact the merchant to have more information.' );
-
+                self::logContent(sprintf("end transaction in the errors %s %s %s"),$order_id,$secure_key,$customer->secure_key);
                 return $this->setTemplate( 'error.tpl' );
             }
         } else {
@@ -149,6 +150,6 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
      */
     public static function logContent($parameters)
     {
-        Logger::setup() || Logger::info($parameters);
+        \HummClasses\Helper\Logger::setup() || \HummClasses\Helper\Logger::INFO($parameters);
     }
 }
