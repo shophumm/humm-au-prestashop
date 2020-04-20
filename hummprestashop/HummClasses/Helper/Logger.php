@@ -167,6 +167,6 @@ class Logger
         }
 
         if (\Configuration::get('HUMM_LOG'))
-        self::INFO($parameters);
+            self::INFO($parameters);
     }
 }
