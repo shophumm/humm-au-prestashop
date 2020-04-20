@@ -157,4 +157,15 @@ class Logger
         self::writeLog($message, self::ERROR);
     }
 
+    /**
+     * @param $parameters
+     */
+
+    public static function logContent($parameters)
+    {
+        if (!self::$fileLogger) {
+            self::setup();
+        }
+        self::INFO($parameters);
+    }
 }

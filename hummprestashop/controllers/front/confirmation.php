@@ -26,7 +26,7 @@
 
 require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
 require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
-//use HummClasses\Helper\Logger;
+
 
 class HummprestashopConfirmationModuleFrontController extends ModuleFrontController {
     public function postProcess() {

@@ -1,9 +1,4 @@
 <?php
-/**
- *
- */
-//use HummClasses\Helper\Logger;
-
 require_once(dirname(__FILE__) . '/../../common/HummCommon.php');
 require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
 
@@ -95,8 +90,34 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'form_query' => $this->postToCheckoutTemplate($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-        self::logContent(sprintf("Before redirect %s ...",json_encode($query)));
-        return $this->setTemplate( 'redirect.tpl' );
+        HummClasses\Helper\Logger::logContent(sprintf("Before redirect %s ...", json_encode($query)));
+        return $this->setTemplate('redirect.tpl');
+    }
+
+    /**
+     * @param $checkoutUrl
+     * @param $payload
+     * @return string
+     * @throws Exception
+     */
+    protected function postToCheckoutTemplate($checkoutUrl, $payload)
+    {
+
+        try {
+            $formItem = '';
+            $beforeForm = sprintf("%s", "<html> <body> <form id='form' action='$checkoutUrl' method='post'>");
+            foreach ($payload as $key => $value) {
+                $formItem = sprintf("%s %s", $formItem, sprintf("<input type='hidden' id='%s' name='%s' value='%s'/>", $key, $key, htmlspecialchars($value, ENT_QUOTES)));
+            }
+            $afterForm = sprintf("%s", '</form> </body> <script> var form = document.getElementById("form");form.submit();</script></html>');
+            $postForm = sprintf("%s %s %s", $beforeForm, $formItem, $afterForm);
+            HummClasses\Helper\Logger::logContent(sprintf("PostFormTemplate: %s", $postForm));
+            return $postForm;
+        } catch (Exception $e) {
+            HummClasses\Helper\Logger::logContent(sprintf("PostFormErrors=%s", $e->getMessage()));
+            throw new Exception($e->getMessage());
+        }
+
     }
 
     /**
@@ -111,8 +132,28 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         }
         $title = $this->getTitle();
         $isSandbox = Configuration::get('HUMM_TEST') == 1 ? 'sandboxURL' : 'liveURL';
-        self::logContent(sprintf("Start Transaction... %s",json_encode(self::URLS[$title][$isSandbox])));
+        \HummClasses\Helper\Logger::logContent(sprintf("Start Transaction... %s", json_encode(self::URLS[$title][$isSandbox])));
         return self::URLS[$title][$isSandbox];
+    }
+
+    /**
+     * @return string
+     */
+    public function getTitle()
+    {
+        $forceHumm = Configuration::get('HUMM_FORCE_HUMM');
+
+        $countryCode = Configuration::get('HUMM_COUNTRY');
+
+        if ($countryCode == 'NZ') {
+            if ($forceHumm) {
+                return 'NZ_Humm';
+            } else {
+                return 'NZ_Oxipay';
+            }
+        } else {
+            return 'AU';
+        }
     }
 
     /**
@@ -138,60 +179,5 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         $this->setTemplate($this->local_path . 'error.tpl');
 
         return;
-    }
-
-    /**
-     * @return string
-     */
-    public function getTitle()
-    {
-        $forceHumm = Configuration::get('HUMM_FORCE_HUMM');
-
-        $countryCode = Configuration::get('HUMM_COUNTRY');
-
-        if ($countryCode == 'NZ') {
-            if ($forceHumm) {
-                return 'NZ_Humm';
-            } else {
-                return 'NZ_Oxipay';
-            }
-        } else {
-            return 'AU';
-        }
-    }
-
-    /**
-     * @param $parameters
-     */
-
-    public static function logContent($parameters)
-    {
-        \HummClasses\Helper\Logger::setup() || \HummClasses\Helper\Logger::INFO($parameters);
-    }
-
-    /**
-     * @param $checkoutUrl
-     * @param $payload
-     * @return string
-     * @throws Exception
-     */
-    protected function postToCheckoutTemplate($checkoutUrl, $payload)
-    {
-
-        try {
-            $formItem = '';
-            $beforeForm = sprintf("%s", "<html> <body> <form id='form' action='$checkoutUrl' method='post'>");
-            foreach ($payload as $key => $value) {
-                $formItem = sprintf("%s %s", $formItem, sprintf("<input type='hidden' id='%s' name='%s' value='%s'/>", $key, $key, htmlspecialchars($value, ENT_QUOTES)));
-            }
-            $afterForm = sprintf("%s", '</form> </body> <script> var form = document.getElementById("form");form.submit();</script></html>');
-            $postForm = sprintf("%s %s %s", $beforeForm, $formItem, $afterForm);
-            self::logContent(sprintf("PostFormTemplate: %s", $postForm));
-            return $postForm;
-        } catch (Exception $e) {
-            self::logContent(sprintf("PostFormErrors=%s", $e->getMessage()));
-            throw new Exception($e->getMessage());
-        }
-
     }
 }
