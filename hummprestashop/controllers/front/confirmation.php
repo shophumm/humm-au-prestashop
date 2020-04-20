@@ -25,6 +25,8 @@
  */
 
 require_once( dirname( __FILE__ ) . '/../../common/HummCommon.php' );
+require_once(dirname(__FILE__) . '/../../HummClasses/Helper/Logger.php');
+use HummClasses\Helper\Logger;
 
 class HummprestashopConfirmationModuleFrontController extends ModuleFrontController {
     public function postProcess() {
@@ -44,6 +46,8 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             $parts    = parse_url( $full_url, PHP_URL_QUERY ); 
             parse_str( $parts, $query );
         }
+
+        self::logContent(sprintf(" Return Query%s",json_encode($query)));
 
         $isValid = HummCommon::isValidSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
 
@@ -126,8 +130,25 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
         }
     }
 
+    /**
+     * @param $cart_id
+     * @param $order_id
+     * @param $secure_key
+     */
     private function redirectToOrderConfirmationPage( $cart_id, $order_id, $secure_key ) {
         $module_id = $this->module->id;
         Tools::redirect( 'index.php?controller=order-confirmation&id_cart=' . $cart_id . '&id_module=' . $module_id . '&id_order=' . $order_id . '&key=' . $secure_key );
+    }
+
+    /**
+     * @param $parameters
+     */
+
+    /**
+     * @param $parameters
+     */
+    public static function logContent($parameters)
+    {
+        Logger::setup() || Logger::info($parameters);
     }
 }
