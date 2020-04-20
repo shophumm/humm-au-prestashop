@@ -88,6 +88,7 @@ class Hummprestashop extends PaymentModule
             $this->registerHook('displayCheckoutSummaryTop') &&
             $this->registerHook('displayHeader') &&
             $this->registerHook('displayProductPriceBlock') &&
+            $this->registerHook('displayProductButtons') &&
             $this->registerHook('header') &&
             $this->registerHook('backOfficeHeader') &&
             $this->registerHook('payment') && //this is an alias for displayPayment ('payment' is deprecated)
@@ -252,8 +253,8 @@ class Hummprestashop extends PaymentModule
                         'required' => true,
                         'options' => array(
                             'query' => array(
-                                array('id' => 'Oxipay', 'name' => 'Oxipay'),
-                                array('id' => 'Humm', 'name' => 'Humm'),
+                                array('id' => 'Oxipay', 'name' => 'oxipay'),
+                                array('id' => 'Humm', 'name' => 'humm'),
                             ),
                             'id' => 'id',
                             'name' => 'name',
@@ -578,6 +579,7 @@ class Hummprestashop extends PaymentModule
     {
         $this->context->controller->addJS($this->_path . '/views/js/front.js');
         $this->context->controller->addCSS($this->_path . '/views/css/front.css');
+
     }
 
     /**
@@ -658,6 +660,10 @@ class Hummprestashop extends PaymentModule
     }
 
     //TODO: is this really needed?
+
+    /**
+     * @param $params
+     */
     public function hookDisplayPaymentReturn($params)
     {
         if ($this->active == false) {
@@ -679,4 +685,80 @@ class Hummprestashop extends PaymentModule
 
         return $this->display(__FILE__, 'views/templates/hook/confirmation.tpl');
     }
+
+
+    /**
+     * @param $param
+     * @return mixed
+     */
+    public function hookdisplayProductButtons($param)
+    {
+
+        if (Configuration::get('HUMM_DISPLAY_WIDGET_PRODUCTPAGE') && $this->context->controller->php_self == 'product' ) {
+            $this->smarty->assign(array(
+                'productPrice' => $param['product']->getPrice()
+            ));
+            return $this->display(__FILE__, 'views/templates/hook/product_widget.tpl');
+        }
+
+    }
+
+    /**
+     * @param $param
+     * @return string
+     * @throws Exception
+     */
+    public function hookDisplayShoppingCartFooter($param)
+    {
+        if (Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE')) {
+            $this->smarty->assign(array(
+                'productPrice' => $this->context->cart->getOrderTotal(true)
+            ));
+            return $this->display(__FILE__, 'views/templates/hook/product_widget.tpl');
+        };
+    }
+
+    /**
+     * @param $param
+     * @return string
+     * @throws Exception
+     */
+
+    public function hookdisplayCheckoutSummaryTop($param)
+    {
+        if (Configuration::get('HUMM_DISPLAYT_WIDGET_CARTPAGE')) {
+            $this->smarty->assign(array(
+                'productPrice' => $this->context->cart->getOrderTotal(true)
+            ));
+            return $this->display(__FILE__, 'views/templates/hook/product_widget.tpl');
+        };
+    }
+
+    /**
+     * Module Hook Display Top.
+     *
+     * @access public
+     * @return  widget html
+     */
+    public function hookDisplayHeader()
+    {
+        $this->context->controller->addJS($this->_path . '/views/js/front.js');
+        $this->context->controller->addCSS($this->_path . '/views/css/front.css');
+
+        if ($this->context->controller->php_self == 'index' &&
+            Configuration::get('HUMM_DISPLAY_BANNER_HOMEPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        } else if ($this->context->controller->php_self == 'product' &&
+            Configuration::get('HUMM_DISPLAY_BANNER_PRODUCTPAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        } else if ($this->context->controller->php_self == 'category' &&
+            Configuration::get('HUMM_DIAPLAY_BANNER_CATEGORY_PAGE')) {
+            $html = $this->humm_widgets->render_banner_product();
+            var_export($html);
+        }
+    }
+
+
 }
