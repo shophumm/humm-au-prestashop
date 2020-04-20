@@ -47,13 +47,12 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             parse_str( $parts, $query );
         }
 
-        self::logContent(sprintf(" End Transaction for Return Query%s",json_encode($query)));
+        \HummClasses\Helper\Logger::logContent(sprintf(" End Transaction for Return Query%s",json_encode($query)));
 
         $isValid = HummCommon::isValidSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
 
         if ( ! $isValid ) {
-            self::logContent(sprintf("Signature error "));
-            PrestaShopLogger::addLog( 'Possible site forgery detected: invalid response signature.', 1 );
+            \HummClasses\Helper\Logger::logContent(sprintf("Signature error "));
             $this->errors[] = $this->module->l( 'An error occured with the humm payment. Please contact the merchant to have more information' );
 
             return $this->setTemplate( 'error.tpl' );
@@ -109,14 +108,14 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 /**
                  * The order has been placed so we redirect the customer on the confirmation page.
                  */
-                self::logContent(sprintf("end transaction %s %s",$order_id,$secure_key));
+                \HummClasses\Helper\Logger::logContent(sprintf("end transaction %s %s",$order_id,$secure_key));
                 $this->redirectToOrderConfirmationPage( $cart_id, $order_id, $secure_key );
             } else {
                 /**
                  * An error occured and is shown on a new page.
                  */
                 $this->errors[] = $this->module->l( 'An error occured. Please contact the merchant to have more information.' );
-                self::logContent(sprintf("end transaction in the errors %s %s %s"),$order_id,$secure_key,$customer->secure_key);
+                \HummClasses\Helper\Logger::logContent(sprintf("end transaction in the errors %s %s %s"),$order_id,$secure_key,$customer->secure_key);
                 return $this->setTemplate( 'error.tpl' );
             }
         } else {
@@ -141,15 +140,4 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
         Tools::redirect( 'index.php?controller=order-confirmation&id_cart=' . $cart_id . '&id_module=' . $module_id . '&id_order=' . $order_id . '&key=' . $secure_key );
     }
 
-    /**
-     * @param $parameters
-     */
-
-    /**
-     * @param $parameters
-     */
-    public static function logContent($parameters)
-    {
-        \HummClasses\Helper\Logger::setup() || \HummClasses\Helper\Logger::INFO($parameters);
-    }
 }
