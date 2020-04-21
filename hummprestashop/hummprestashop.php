@@ -312,9 +312,9 @@ class Hummprestashop extends PaymentModule
                         ),
                     ),
                     array(
-                        'type'    => 'switch',
-                        'label'   => $this->l('Active'),
-                        'name'    => "HUMM_IS_ACTIVE",
+                        'type' => 'switch',
+                        'label' => $this->l('Active'),
+                        'name' => "HUMM_IS_ACTIVE",
                         'is_bool' => true,
                         'class' => 't',
                         'values' => array(
@@ -621,7 +621,7 @@ class Hummprestashop extends PaymentModule
             return false;
         }
 
-        if (!Configuration::get('HUMM_IS_ACTIVE')){
+        if (!Configuration::get('HUMM_IS_ACTIVE')) {
             return false;
         }
         $notValid = $this->cartValidationErrors($params['cart']);
@@ -642,8 +642,7 @@ class Hummprestashop extends PaymentModule
         $newOption->setModuleName($this->name);
         if (!$notValid) {
             $newOption->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
-        }
-        else {
+        } else {
             $newOption->setAction(null);
         }
         $newOption->setAdditionalInformation($this->fetch($this->local_path . 'views/templates/hooks/payment.tpl'));
