@@ -25,34 +25,101 @@
 * Don't forget to prefix your containers with your own identifier
 * to avoid any conflicts with others containers.
 */
-.humm-payment-logo {
-    height: 100px;
-    background-repeat: no-repeat, no-repeat, no-repeat;
-    background-image: url(../img/bird-humm.svg);
+html {
+    background-color: #fff;
 }
 
-.section-config.with-button.humm-payment-section .config-heading strong {
+#wrapper {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: stretch;
+    width: 100%;
+    height: 100%;
+}
+
+.card {
+    vertical-align: middle;
+    background-color: #fff;
+    max-width: 520px;
+    min-height: 400px;
+    margin: 0 auto;
+    position: relative;
+    margin-top: 20px;
+    text-align: center;
+}
+
+@media screen and (max-width: 768px) {
+    .card {
+        max-width: 100%;
+        margin-top: 0;
+        border-radius: 0;
+        position: absolute;
+        width: 100%;
+        min-height: 0;
+        overflow: scroll;
+        bottom: 0;
+        top: 55px;
+    }
+}
+
+.card .card-heading {
+    padding: 12px;
+    background-color: white;
+}
+
+.card .card-heading h4 {
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    font-size: 1.5rem;
+}
+.humm-general{
+    font-size:1.2rem !important;
+}
+#humm-container .form-table{
+    background: lightgrey !important;
+    border: 2px solid goldenrod;
+}
+#humm-container .form-table th {
+    padding-left: 8px;
+    font-weight: 300;
+}
+
+#humm-container {
     font-weight: normal;
 }
 
-.complex.humm-payment-section .button-container {
-    float: right;
+.humm-margin-below {
+    margin-bottom: 10px;
 }
-
-.humm-payment-byline {
-    padding: 10px;
-    color: goldenrod;
-    font-size: 15px;
-    margin-left: 30%;
-    display: inline-block;
+.humm-payment-logo
+{
+    float:left;
+    display:inline-block;
     vertical-align: middle;
-    width: 50%;
+    margin: 1px 40px 10px 5px;
+    width: 137px;
+    height:100px;
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-image: url(../img/bird-humm.svg);
 }
-
-.simplepath-wrapper-set.active .admin__collapsible-block {
-    display: none;
+.humm-header {
+    display: table;
 }
-
-.humm-payment-section.section-config.active > .admin__collapsible-block + input + fieldset {
-    margin-left: 40px;
+.section-config.with-button.humm-payment-section .config-heading { font-weight: normal; }
+.complex.humm-payment-section .button-container { float:right; }
+.humm-payment-byline
+{
+    font-size: 15px;
+    display: table-cell;
+    vertical-align: middle;
 }
+.simplepath-wrapper-set.active .admin__collapsible-block
+{ display:none; }
+.humm-payment-section.section-config.active > .admin__collapsible-block + input + fieldset { margin-left: 40px; }

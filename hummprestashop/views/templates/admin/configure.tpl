@@ -22,15 +22,18 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-{* This can be used to create a header for the config form, maybe with humm logo and description *}
 
-<div class="panel">
-	<div class="row hummprestashop-header humm-payment-logo">
-		<div class="col-xs-6 col-md-4 text-center">
-			<div class="humm-payment-byline">Little things. Big things. Interest freeee!<br/>Humm Payment</div>
-		</div>
-		<div class="col-xs-12 col-md-8">
-			<div class="humm-payment-byline">If you don't have a humm merchant account you may join <a href="https://www.shophumm.com.au/sell-with-humm/" target="_blank">here.!</a></div>
-		</div>
+<div class="humm-header">
+	<div class="humm-payment-logo"></div>
+	<div class="humm-payment-byline">Little things. Big things. Interest freeee!<br/>Humm Payment</div>
+</div>
+<div id="humm_simplepath">
+	<div id="simplepath_unsupported">
+		<p><a href="https://docs.shophumm.com.au/ecommerce/prestashop/" target="_blank"> Humm PrestaShop
+				Documentation </a></p>
 	</div>
+</div>
+
+<div id="humm_simplepath_back">
+	<p>If you don't have a humm merchant account you may join <a href="https://www.shophumm.com.au/sell-with-humm" target="_blank"><span>here</span></a></p>
 </div>
