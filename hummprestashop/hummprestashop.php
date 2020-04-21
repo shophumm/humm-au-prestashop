@@ -287,24 +287,24 @@ class Hummprestashop extends PaymentModule
      */
     protected function getConfigForm()
     {
-//        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
-////        $minimumAmountField = $pre16 ?
-////            array(
-////                'type' => 'text',
-////                'label' => $this->l("Minimum Order Value"),
-////                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
-////                'name' => 'HUMM_MIN_ORDER',
-////                'placeholder' => '0'
-////            ) :
-////            array(
-////                'type' => 'html',
-////                'label' => $this->l("Minimum Order Value"),
-////                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
-////                'name' => 'HUMM_MIN_ORDER',
-////                'size' => 32,
-////                'required' => true,
-////                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
-////            );
+        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
+        $minimumAmountField = $pre16 ?
+            array(
+                'type' => 'text',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'placeholder' => '0'
+            ) :
+            array(
+                'type' => 'html',
+                'label' => $this->l("Minimum Order Value"),
+                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                'name' => 'HUMM_MIN_ORDER',
+                'size' => 32,
+                'required' => true,
+                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+            );
         return array(
             'form' => array(
                 'legend' => array(
@@ -340,7 +340,7 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
-//                    $minimumAmountField,
+                    $minimumAmountField,
                     array(
                         'type' => 'select',
                         'label' => $this->l('Is Test?'),
@@ -392,16 +392,6 @@ class Hummprestashop extends PaymentModule
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
                     ),
 
-
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Minimum Order Value'),
-                        'prefix' => '<i class="icon icon-user"></i>',
-                        'name' => 'HUMM_MIN_ORDER',
-                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
-                        'required' => true
-                    ),
-
                     array(
                         'type' => 'text',
                         'label' => $this->l('Merchant ID'),
@@ -434,13 +424,13 @@ class Hummprestashop extends PaymentModule
         $fields_form_customization = array(
             'form' => array(
                 'legend' => array(
-                    'title' => $this->l('Widgets', array(), 'Modules.HummPayment.Admin'),
+                    'title' => $this->trans('Widgets', array(), 'Modules.HummPayment.Admin'),
                     'icon' => 'icon-cogs'
                 ),
                 'input' => array(
                     array(
                         'type' => 'label',
-                        'label' => $this->l('Home Page'),
+                        'label' => $this->trans('Home Page'),
                         'lang' => true
                     ),
                     array(
