@@ -12,14 +12,13 @@ if (!defined('_PS_VERSION_'))
 class Logger
 {
 
-    private static $fileLogger;  // Log file name
-
-    private static $filePath; // Log file name
-    private static $fileName = "Humm-Payments.log";  // Log file name
-    const ERROR = 7;  // Error: error conditions
-    const WARN = 8;  // Warning: warning conditions
-    const INFO = 9;  // Informational: informational messages
-    const DEBUG = 10;  // Debug: debug messages
+    const ERROR = 7;  // Log file name
+const WARN = 8; // Log file name
+    const INFO = 9;  // Log file name
+    const DEBUG = 10;  // Error: error conditions
+    private static $fileLogger;  // Warning: warning conditions
+    private static $filePath;  // Informational: informational messages
+    private static $fileName = "Humm-Payments.log";  // Debug: debug messages
 
     /**
      * Logger constructor.
@@ -39,25 +38,14 @@ class Logger
     }
 
     /**
-     * Sets up the logger and defines the log file path.
+     * Logs the debug message
      *
      * @access public
      */
-
-    public static function setup()
+    public static function debug($message, $overideConfig = false)
     {
-        if (!self::$fileLogger) {
-            self::$fileLogger = new \FileLogger;
-
-            if (version_compare(_PS_VERSION_, '1.7', '>='))
-                self::$filePath = _PS_ROOT_DIR_ . '/app/logs/';
-            else
-                self::$filePath = _PS_ROOT_DIR_ . '/log/';
-
-            self::$fileLogger->setFilename(self::$filePath . self::$fileName);
-        }
+        self::writeLog($message, self::DEBUG, $overideConfig);
     }
-
 
     /**
      * @param $message
@@ -118,26 +106,6 @@ class Logger
     }
 
     /**
-     * Logs the debug message
-     *
-     * @access public
-     */
-    public static function debug($message, $overideConfig = false)
-    {
-        self::writeLog($message, self::DEBUG, $overideConfig);
-    }
-
-    /**
-     * Logs the info message
-     *
-     * @access public
-     */
-    public static function info($message)
-    {
-        self::writeLog($message, self::INFO);
-    }
-
-    /**
      * Logs the warnings
      *
      * @access public
@@ -157,4 +125,46 @@ class Logger
         self::writeLog($message, self::ERROR);
     }
 
+    /**
+     * @param $parameters
+     */
+    public static function logContent($parameters)
+    {
+        if (!self::$fileLogger) {
+            self::setup();
+        }
+
+        if (\Configuration::get('HUMM_LOG'))
+            self::INFO($parameters);
+    }
+
+    /**
+     * Sets up the logger and defines the log file path.
+     *
+     * @access public
+     */
+
+    public static function setup()
+    {
+        if (!self::$fileLogger) {
+            self::$fileLogger = new \FileLogger;
+
+            if (version_compare(_PS_VERSION_, '1.7', '>='))
+                self::$filePath = _PS_ROOT_DIR_ . '/app/logs/';
+            else
+                self::$filePath = _PS_ROOT_DIR_ . '/log/';
+
+            self::$fileLogger->setFilename(self::$filePath . self::$fileName);
+        }
+    }
+
+    /**
+     * Logs the info message
+     *
+     * @access public
+     */
+    public static function info($message)
+    {
+        self::writeLog($message, self::INFO);
+    }
 }

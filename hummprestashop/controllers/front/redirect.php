@@ -117,7 +117,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             'form_query' => $this->postToCheckoutTemplate($this->getGatewayUrl(), $query),
             'this_path_ssl' => Tools::getShopDomainSsl(true, true) . __PS_BASE_URI__ . 'modules/' . $this->module->name . '/'
         ));
-        self::logContent(json_encode($query));
+        Logger::logContent(sprintf("form para log before redirect %s",json_encode($query)));
         $this->setTemplate('module:hummprestashop/views/templates/front/redirect.tpl');
     }
 
@@ -133,7 +133,7 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
         }
         $title = $this->getTitle();
         $isSandbox = Configuration::get('HUMM_TEST') == 1 ? 'sandboxURL' : 'liveURL';
-        self::logContent(json_encode(self::URLS[$title][$isSandbox]));
+        Logger::logContent(json_encode(self::URLS[$title][$isSandbox]));
         return self::URLS[$title][$isSandbox];
     }
 
@@ -183,15 +183,6 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
     }
 
     /**
-     * @param $parameters
-     */
-
-    public static function logContent($parameters)
-    {
-        Logger::setup() || Logger::info($parameters);
-    }
-
-    /**
      * @param $checkoutUrl
      * @param $payload
      * @return string
@@ -208,10 +199,10 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
             }
             $afterForm = sprintf("%s", '</form>');
             $postForm = sprintf("%s %s %s", $beforeForm, $formItem, $afterForm);
-            self::logContent(sprintf("PostFormTemplate: %s", $postForm));
+            Logger::logContent(sprintf("Start Payment  ---PostFormTemplate: %s", $postForm));
             return $postForm;
         } catch (Exception $e) {
-            self::logContent(sprintf("PostFormErrors=%s", $e->getMessage()));
+            Logger::logContent(sprintf("PostFormErrors=%s", $e->getMessage()));
             throw new Exception($e->getMessage());
         }
 
