@@ -614,8 +614,12 @@ class Hummprestashop extends PaymentModule
         ));
         $newOption = new PaymentOption();
         $newOption->setModuleName($this->name);
-//      $newOption->setCallToActionText($this->trans('Pay by ' . Configuration::get('HUMM_TITLE'), array(), 'Modules.Hummprestashop.Admin'));
-        $newOption->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
+        if (!$notValid) {
+            $newOption->setAction($this->context->link->getModuleLink($this->name, 'redirect', array(), true));
+        }
+        else {
+            $newOption->setAction(null);
+        }
         $newOption->setAdditionalInformation($this->fetch($this->local_path . 'views/templates/hooks/payment.tpl'));
         $newOption->setLogo(Media::getMediaPath($this->local_path . 'images/' . strtolower(Configuration::get('HUMM_TITLE')) . '-small.png'));
         return [$newOption];
