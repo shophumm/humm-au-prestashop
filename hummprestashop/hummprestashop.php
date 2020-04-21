@@ -122,6 +122,7 @@ class Hummprestashop extends PaymentModule
     public function uninstall()
     {
         Configuration::deleteByName('HUMM_TITLE');
+        Configuration::deleteByName('HUMM_IS_ACTIVE');
         Configuration::deleteByName('HUMM_COUNTRY');
         Configuration::deleteByName('HUMM_TEST');
         Configuration::deleteByName('HUMM_LOG');
@@ -208,6 +209,7 @@ class Hummprestashop extends PaymentModule
     protected function postProcess()
     {
         //save the values for the rest of the configuration properties
+        Configuration::updateValue('HUMM_IS_ACTIVE', Tools::getValue('HUMM_IS_ACTIVE'));
         Configuration::updateValue('HUMM_TITLE', Tools::getValue('HUMM_TITLE'));
         Configuration::updateValue('HUMM_COUNTRY', Tools::getValue('HUMM_COUNTRY'));
         Configuration::updateValue('HUMM_TEST', Tools::getValue('HUMM_TEST'));
@@ -264,6 +266,7 @@ class Hummprestashop extends PaymentModule
     protected function getConfigFormValues()
     {
         return array(
+            'HUMM_IS_ACTIVE' => Configuration::get('HUMM_IS_ACTIVE'),
             'HUMM_TITLE' => Configuration::get('HUMM_TITLE'),
             'HUMM_COUNTRY' => Configuration::get('HUMM_COUNTRY'),
             'HUMM_TEST' => Configuration::get('HUMM_TEST'),
@@ -306,6 +309,25 @@ class Hummprestashop extends PaymentModule
                             ),
                             'id' => 'id',
                             'name' => 'name',
+                        ),
+                    ),
+                    array(
+                        'type'    => 'switch',
+                        'label'   => $this->l('Active'),
+                        'name'    => "HUMM_IS_ACTIVE",
+                        'is_bool' => true,
+                        'class' => 't',
+                        'values' => array(
+                            array(
+                                'id' => 'active_on',
+                                'value' => true,
+                                'label' => $this->l('Enabled'),
+                            ),
+                            array(
+                                'id' => 'active_off',
+                                'value' => false,
+                                'label' => $this->l('Disabled'),
+                            )
                         ),
                     ),
                     array(
@@ -596,6 +618,10 @@ class Hummprestashop extends PaymentModule
             return false;
         }
         if (!$this->checkCurrency($params['cart'])) {
+            return false;
+        }
+
+        if (!Configuration::get('HUMM_IS_ACTIVE')){
             return false;
         }
         $notValid = $this->cartValidationErrors($params['cart']);
