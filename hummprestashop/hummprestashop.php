@@ -287,24 +287,6 @@ class Hummprestashop extends PaymentModule
      */
     protected function getConfigForm()
     {
-        $pre16 = version_compare(_PS_VERSION_, '1.6', '<');
-        $minimumAmountField = $pre16 ?
-            array(
-                'type' => 'text',
-                'label' => $this->l("Minimum Order Value"),
-                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
-                'name' => 'HUMM_MIN_ORDER',
-                'placeholder' => '0'
-            ) :
-            array(
-                'type' => 'html',
-                'label' => $this->l("Minimum Order Value"),
-                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
-                'name' => 'HUMM_MIN_ORDER',
-                'size' => 32,
-                'required' => true,
-                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
-            );
         return array(
             'form' => array(
                 'legend' => array(
@@ -340,7 +322,15 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
-                    $minimumAmountField,
+                    array(
+                        'type' => 'html',
+                        'label' => $this->l("Minimum Order Value"),
+                        'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                        'name' => 'HUMM_MIN_ORDER',
+                        'size' => 32,
+                        'required' => true,
+                        'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+                    ),
                     array(
                         'type' => 'select',
                         'label' => $this->l('Is Test?'),
