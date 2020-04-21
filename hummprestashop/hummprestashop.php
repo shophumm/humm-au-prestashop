@@ -658,9 +658,9 @@ class Hummprestashop extends PaymentModule
 
         $msg = "";
 
-        if ($cart->getOrderTotal() < floatval(Tools::getAllValues('HUMM_MIN_VALUE'))) {
+        if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER'))) {
 
-            $msg = "Humm doesn't support purchases less than $" . Tools::getAllValues('HUMM_MIN_VALUE');
+            $msg = "Humm doesn't support purchases less than $" . Configuration::get('HUMM_MIN_ORDER');
 
         }
 

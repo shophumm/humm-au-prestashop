@@ -91,7 +91,6 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 //and the payment was successful...
                 //Because only successful transactions generate orders
                 $this->redirectToOrderConfirmationPage($cart_id, $order_id, $secure_key);
-
                 return true;
             }
         }
@@ -101,7 +100,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
          */
         $module_name = $this->module->displayName;
         $currency_id = (int)Context::getContext()->currency->id;
-
+        $returnValue = false;
         if ($isValid && Tools::getValue('x_result') == 'completed') {
             $message = "Humm authorisation success. Transaction #$transactionId";
             $this->module->validateOrder($cart_id, $payment_status, $cart->getOrderTotal(), $module_name, $message, array(), $currency_id, false, $secure_key);
@@ -116,19 +115,17 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                  * The order has been placed so we redirect the customer on the confirmation page.
                  */
 
-                Logger::logContent(sprintf("end transaction %s %s", $order_id, $secure_key));
+                Logger::logContent(sprintf("end transaction [ OrderId:%s] [ Secure Key:%s]", $order_id, $secure_key));
                 $this->redirectToOrderConfirmationPage($cart_id, $order_id, $secure_key);
-
-                return true;
+                  $returnValue = true;
             } else {
                 /**
                  * An error occured and is shown on a new page.
                  */
                 $this->errors[] = $this->module->l('An error occured. Please contact the merchant to have more information.');
-                Logger::logContent(sprintf("end transaction in the errors %s %s %s %s"), $order_id, $secure_key, $customer->secure_key,json_encode($this->errors));
+                Logger::logContent(sprintf("end transaction in the errors %s %s %s %s"), $order_id, $secure_key, $customer->secure_key, json_encode($this->errors));
                 $this->setTemplate('module:hummprestashop/views/templates/front/error.tpl');
-
-                return false;
+                   $returnValue = false;
             }
         } else {
             /**
@@ -139,9 +136,13 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             $this->context->smarty->assign('checkout_link', $link);
             $this->context->smarty->assign('errors', $this->errors);
             $this->setTemplate('module:hummprestashop/views/templates/front/error.tpl');
-
-            return false;
+            $returnValue = false;
         }
+        if ($this->errors){
+            Logger::logContent(sprintf("some errors %s",json_encode($this->errors)));
+        }
+
+        return $returnValue;
     }
 
     private function redirectToOrderConfirmationPage($cart_id, $order_id, $secure_key)
