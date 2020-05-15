@@ -47,13 +47,12 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 $_SERVER['HTTP_HOST'],
                 $_SERVER['REQUEST_URI']
             );
-
             $parts = parse_url($full_url, PHP_URL_QUERY);
             parse_str($parts, $query);
         }
 
         $isValid = HummCommon::isValidSignature($query, Configuration::get('HUMM_API_KEY'));
-        Logger::logContent(sprintf(" End Transaction for Return Query%s", json_encode($query)));
+        Logger::logContent(sprintf("End Transaction for Return Query%s Method %s", json_encode($query),$_SERVER['REQUEST_METHOD']));
 
         if (!$isValid) {
             \HummClasses\Helper\Logger::logContent(sprintf("Signature error "));
