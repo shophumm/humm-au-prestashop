@@ -47,7 +47,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
             parse_str( $parts, $query );
         }
 
-        \HummClasses\Helper\Logger::logContent(sprintf(" End Transaction for Return Query%s",json_encode($query)));
+        \HummClasses\Helper\Logger::logContent(sprintf(" End Transaction for Return Query%s Mothod %s",json_encode($query),$_SERVER['REQUEST_METHOD']));
 
         $isValid = HummCommon::isValidSignature( $query, Configuration::get( 'HUMM_API_KEY' ) );
 
@@ -83,8 +83,8 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 //if the order had already been validated by the async callback from the Payment Gateway
                 //and the payment was successful...
                 //Because only successful transactions generate orders
+                \HummClasses\Helper\Logger::logContent(sprintf("End Transaction by Directly Return without Add New Order %s %s",$order_id,$secure_key));
                 $this->redirectToOrderConfirmationPage( $cart_id, $order_id, $secure_key );
-
                 return true;
             }
         }
@@ -108,7 +108,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
                 /**
                  * The order has been placed so we redirect the customer on the confirmation page.
                  */
-                \HummClasses\Helper\Logger::logContent(sprintf("end transaction %s %s",$order_id,$secure_key));
+                \HummClasses\Helper\Logger::logContent(sprintf("End Transaction By Add New Order %s %s",$order_id,$secure_key));
                 $this->redirectToOrderConfirmationPage( $cart_id, $order_id, $secure_key );
             } else {
                 /**
