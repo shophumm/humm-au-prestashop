@@ -22,19 +22,18 @@
 *  @license   http://opensource.org/licenses/afl-3.0.php  Academic Free License (AFL 3.0)
 *  International Registered Trademark & Property of PrestaShop SA
 *}
-{* This can be used to create a header for the config form, maybe with humm logo and description *}
-{*
-<div class="panel">
-	<div class="row hummprestashop-header">
-		<img src="{$module_dir|escape:'html':'UTF-8'}views/img/humm_logo.png" class="col-xs-6 col-md-4 text-center" id="payment-logo" />
-		<div class="col-xs-6 col-md-4 text-center">
-			<h4>{l s='Online payment processing' mod='hummprestashop'}</h4>
-			<h4>{l s='Fast - Secure - Reliable' mod='hummprestashop'}</h4>
-		</div>
-		<div class="col-xs-12 col-md-4 text-center">
-			<a href="#" onclick="javascript:return false;" class="btn btn-primary" id="create-account-btn">{l s='Create an account now!' mod='hummprestashop'}</a><br />
-			{l s='Already have an account?' mod='hummprestashop'}<a href="#" onclick="javascript:return false;"> {l s='Log in' mod='hummprestashop'}</a>
-		</div>
+
+<div class="humm-header">
+	<div class="humm-payment-logo"></div>
+	<div class="humm-payment-byline">Little things. Big things. Interest freeee!<br/>Humm Payment</div>
+</div>
+<div id="humm_simplepath">
+	<div id="simplepath_unsupported">
+		<p><a href="https://docs.shophumm.com.au/ecommerce/prestashop/" target="_blank"> Humm PrestaShop
+				Documentation </a></p>
 	</div>
 </div>
-*}
+
+<div id="humm_simplepath_back">
+	<p>If you don't have a humm merchant account you may join <a href="https://www.shophumm.com.au/sell-with-humm" target="_blank"><span>here</span></a></p>
+</div>

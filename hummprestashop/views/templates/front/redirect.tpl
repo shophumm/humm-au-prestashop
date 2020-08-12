@@ -27,7 +27,7 @@
     {capture name=path}
         <a href="{$link->getPageLink('order', true, NULL, "step=3")|escape:'html':'UTF-8'}"
            title="{l s='Go back to the Checkout' mod='hummprestashop'}">{l s='Checkout' mod='hummprestashop'}</a>
-        <span class="navigation-pipe">{$navigationPipe}</span>{l s='Humm' mod='hummprestashop'}
+        {*<span class="navigation-pipe">{$navigationPipe}</span>{l s='Humm' mod='hummprestashop'}*}
     {/capture}
 
     {assign var='current_step' value='payment'}

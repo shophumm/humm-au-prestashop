@@ -1,7 +1,7 @@
 <?php
 
 class HummCommon {
-    const HUMM_PLUGIN_VERSION = 'humm_plugin_version_placeholder';
+    const HUMM_PLUGIN_VERSION = '1.5.8-forPS1.7';
 
     /**
      * validates and associative array that contains a hmac signature against an api key
