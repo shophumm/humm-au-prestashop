@@ -1,9 +1,15 @@
 # humm-prestashop
 
-PrestaShop integration plugin for using the **humm** payment gateway
+https://github.com/shophumm/humm-au-prestashop/blob/master/1.7/Prestashop1.6_1.7.pdf
 
-This plugin allows switching between Oxipay and **humm** in the settings page.
+PrestaShop integration plugin for using the humm payment gateway
 
-Please see https://docs.shophumm.com.au/ecommerce/prestashop/ (Australian) or https://docs.shophumm.co.nz/ecommerce/prestashop/ (New Zealand) for information on how to use this plugin. 
+download from https://github.com/shophumm/humm-au-prestashop/archive/master/1.6.zip
 
-this is a new version
+extra Zip file in the PS 1.6 store in the module folder
+
+or use admin console->modules->module manager->upload a zip file to install
+
+plugin and zip file name are hummprestashop
+
+Please see https://docs.shophumm.com.au for information on how to use this plugin
