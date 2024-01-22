@@ -355,7 +355,7 @@ class Hummprestashop extends PaymentModule
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Sandbox?'),
+                        'label' => $this->l('Sandbox Mode?'),
                         'name' => 'HUMM_TEST',
                         'required' => true,
                         'options' => array(
@@ -687,11 +687,10 @@ class Hummprestashop extends PaymentModule
 
         $msg = "";
 
-        if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER'))) {
-
+        if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER')) )
             $msg = "Orders under $" . Configuration::get('HUMM_MIN_ORDER') . " are not supported by Humm";
-
-        }
+        else if ($cart->getOrderTotal() < 80)
+            $msg = "Orders under $80 are not supported by Humm";
 
         $countryNames = array(
             'AU' => 'Australia',
