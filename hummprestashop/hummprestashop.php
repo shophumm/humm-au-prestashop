@@ -304,7 +304,7 @@ class Hummprestashop extends PaymentModule
                         'required' => true,
                         'options' => array(
                             'query' => array(
-                                array('id' => 'Oxipay', 'name' => 'Oxipay'),
+                                // array('id' => 'Oxipay', 'name' => 'Oxipay'),
                                 array('id' => 'Humm', 'name' => 'Humm'),
                             ),
                             'id' => 'id',
@@ -351,11 +351,11 @@ class Hummprestashop extends PaymentModule
                         'name' => 'HUMM_MIN_ORDER',
                         'size' => 32,
                         'required' => true,
-                        'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+                        'html_content' => "<input min='80' max='30000' type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Is Test?'),
+                        'label' => $this->l('Sandbox?'),
                         'name' => 'HUMM_TEST',
                         'required' => true,
                         'options' => array(
@@ -689,7 +689,7 @@ class Hummprestashop extends PaymentModule
 
         if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER'))) {
 
-            $msg = "Humm doesn't support purchases less than $" . Configuration::get('HUMM_MIN_ORDER');
+            $msg = "Orders under $" . Configuration::get('HUMM_MIN_ORDER') . " are not supported by Humm";
 
         }
 

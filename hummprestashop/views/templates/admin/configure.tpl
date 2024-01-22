@@ -25,7 +25,7 @@
 
 <div class="humm-header">
 	<div class="humm-payment-logo"></div>
-	<div class="humm-payment-byline">Little things. Big things. Interest freeee!<br/>Humm Payment</div>
+	
 </div>
 <div id="humm_simplepath">
 	<div id="simplepath_unsupported">
