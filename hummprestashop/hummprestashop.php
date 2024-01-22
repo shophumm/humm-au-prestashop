@@ -689,7 +689,7 @@ class Hummprestashop extends PaymentModule
 
         if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER')) )
             $msg = "Orders under $" . Configuration::get('HUMM_MIN_ORDER') . " are not supported by Humm";
-        else if ($cart->getOrderTotal() < 80)
+        if ($cart->getOrderTotal() < 80)
             $msg = "Orders under $80 are not supported by Humm";
 
         $countryNames = array(
