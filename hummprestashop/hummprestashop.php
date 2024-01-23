@@ -59,7 +59,7 @@ class Hummprestashop extends PaymentModule
         $this->limited_countries = array('AU', 'NZ');
         $this->limited_currencies = array('AUD', 'NZD');
 
-        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '1.7.99.99');
+        $this->ps_versions_compliancy = array('min' => '1.7', 'max' => '8.99.99');
 
         $this->config = Configuration::getMultiple(array('HUMM_MIN_ORDER', 'HUMM_IS_ACTIVE', 'HUMM_API_KEY', 'HUMM_TITLE', 'HUMM_MERCHANT_ID', 'HUMM_TEST', 'HUMM_GATEWAY_URL', 'HUMM_DIAPLAY_BANNER_CATEGORY_PAGE', 'HUMM_DISPLAYT_WIDGET_CARTPAGE', 'HUMM_DISPLAY_BANNER_CARTPAGE', 'HUMM_DISPLAY_BANNER_HOMEPAGE', 'HUMM_DISPLAY_BANNER_PRODUCTPAGE', 'HUMM_DISPLAY_WIDGET_PRODUCTPAGE'));
         $this->humm_widgets = new \HummClasses\HummWidgets($this->context);
@@ -313,7 +313,7 @@ class Hummprestashop extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Active'),
+                        'label' => $this->l('Status'),
                         'name' => "HUMM_IS_ACTIVE",
                         'is_bool' => true,
                         'class' => 't',

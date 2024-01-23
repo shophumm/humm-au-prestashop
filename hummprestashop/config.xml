@@ -2,9 +2,9 @@
 <module>
     <name>hummprestashop</name>
     <displayName><![CDATA[humm]]></displayName>
-    <version><![CDATA[1.5.8-forPS1.7]]></version>
+    <version><![CDATA[1.5.8-forPS1.7-8.1.3]]></version>
     <description><![CDATA[Accept payments for your products via humm.]]></description>
-    <author><![CDATA[Humm]]></author>
+    <author><![CDATA[humm]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>
     <is_configurable>1</is_configurable>
