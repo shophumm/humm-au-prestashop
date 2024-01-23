@@ -347,7 +347,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => 'html',
                         'label' => $this->l("Minimum Order Amount"),
-                        'desc' => $this->l('Minimum value must be $80 to use humm at checkout.'),
+                        'desc' => $this->l('Minimum value must be greater or equal to 80 to use humm at checkout.'),
                         'name' => 'HUMM_MIN_ORDER',
                         'size' => 32,
                         'required' => true,
