@@ -33,7 +33,3 @@
 				Documentation </a></p>
 	</div>
 </div>
-
-<div id="humm_simplepath_back">
-	<p>If you don't have a humm merchant account you may join <a href="https://www.shophumm.com.au/sell-with-humm" target="_blank"><span>here</span></a></p>
-</div>
