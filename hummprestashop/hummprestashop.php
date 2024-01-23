@@ -347,7 +347,7 @@ class Hummprestashop extends PaymentModule
                     array(
                         'type' => 'html',
                         'label' => $this->l("Minimum Order Amount"),
-                        'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                        'desc' => $this->l('You can set the minimum order/cart value for humm to show at checkout.'),
                         'name' => 'HUMM_MIN_ORDER',
                         'size' => 32,
                         'required' => true,
@@ -688,9 +688,9 @@ class Hummprestashop extends PaymentModule
         $msg = "";
 
         if ($cart->getOrderTotal() < floatval(Configuration::get('HUMM_MIN_ORDER')) )
-            $msg = "Orders under $" . Configuration::get('HUMM_MIN_ORDER') . " are not supported by Humm";
+            $msg = "Orders under $" . Configuration::get('HUMM_MIN_ORDER') . " are not supported by humm";
         if ($cart->getOrderTotal() < 80)
-            $msg = "Orders under $80 are not supported by Humm";
+            $msg = "Orders under $80 are not supported by humm";
 
         $countryNames = array(
             'AU' => 'Australia',
