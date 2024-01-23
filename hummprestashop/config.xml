@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
     <name>hummprestashop</name>
-    <displayName><![CDATA[Humm prestashop]]></displayName>
+    <displayName><![CDATA[humm]]></displayName>
     <version><![CDATA[1.5.8-forPS1.7]]></version>
     <description><![CDATA[Accept payments for your products via humm.]]></description>
     <author><![CDATA[Humm]]></author>
