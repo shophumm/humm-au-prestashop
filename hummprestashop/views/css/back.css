@@ -100,12 +100,12 @@ html {
 }
 .humm-payment-logo
 {
-    float:left;
+    /* float:left; */
     display:inline-block;
     vertical-align: middle;
     margin: 1px 40px 10px 5px;
-    width: 137px;
-    height:100px;
+    width: 152px;
+    height:127px;
     background-repeat: no-repeat, no-repeat, no-repeat;
     background-image: url(../img/humm-logo.svg);
 }

@@ -29,7 +29,6 @@
 </div>
 <div id="humm_simplepath">
 	<div id="simplepath_unsupported">
-		<p><a href="https://docs.shophumm.com.au/ecommerce/prestashop/" target="_blank"> humm PrestaShop
-				Documentation </a></p>
+		<p><a href="https://docs.shophumm.com.au/ecommerce/prestashop.html/" target="_blank">Need help? Refer to the Installation Guide</a></p>
 	</div>
 </div>
