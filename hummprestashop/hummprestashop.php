@@ -40,7 +40,7 @@ class Hummprestashop extends PaymentModule
         $this->name = 'hummprestashop';
         $this->tab = 'payments_gateways';
         $this->version = HummCommon::HUMM_PLUGIN_VERSION;
-        $this->author = 'Humm';
+        $this->author = 'humm';
         $this->need_instance = 0;
 
         /**
@@ -50,11 +50,11 @@ class Hummprestashop extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Humm prestashop');
+        $this->displayName = $this->l('humm');
         $this->description = $this->l('Accept payments for your products via humm.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the humm module?');
-        $this->author = 'Humm';
+        $this->author = 'humm';
 
         $this->limited_countries = array('AU', 'NZ');
         $this->limited_currencies = array('AUD', 'NZD');
