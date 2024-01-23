@@ -305,7 +305,7 @@ class Hummprestashop extends PaymentModule
                         'options' => array(
                             'query' => array(
                                 // array('id' => 'Oxipay', 'name' => 'Oxipay'),
-                                array('id' => 'Humm', 'name' => 'Humm'),
+                                array('id' => 'Humm', 'name' => 'humm'),
                             ),
                             'id' => 'id',
                             'name' => 'name',
