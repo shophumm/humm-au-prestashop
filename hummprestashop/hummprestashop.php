@@ -160,7 +160,7 @@ class Hummprestashop extends PaymentModule
             $postErrors = $this->_postValidation();
             $this->postProcess(); //we still want to save the correct settings, otherwise they'll be lost the first time
             if (!count($postErrors)) {
-                $html .= $this->displayConfirmation($this->l('Humm settings updated.'));
+                $html .= $this->displayConfirmation($this->l('humm settings updated.'));
             } else {
                 foreach ($postErrors as $err) {
                     $html .= $this->displayError($err);
