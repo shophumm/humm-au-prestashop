@@ -20,7 +20,7 @@ class Humm
 
     const VERSION = '2.0.0';
     const PLATFORM = 'Prestashop';
-    const CLIENT = 'Prestashop Humm Payment';
+    const CLIENT = 'Prestashop humm Payment';
 
 
     public function __construct()

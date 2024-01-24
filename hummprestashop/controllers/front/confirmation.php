@@ -96,7 +96,7 @@ class HummprestashopConfirmationModuleFrontController extends ModuleFrontControl
         $currency_id = (int) Context::getContext()->currency->id;
 
         if ( $isValid && Tools::getValue( 'x_result' ) == 'completed' ) {
-            $message = "Humm authorisation success. Transaction #$transactionId";
+            $message = "humm authorisation success. Transaction #$transactionId";
             $this->module->validateOrder( $cart_id, $payment_status, $cart->getOrderTotal(), $module_name, $message, array(), $currency_id, false, $secure_key );
 
             /**

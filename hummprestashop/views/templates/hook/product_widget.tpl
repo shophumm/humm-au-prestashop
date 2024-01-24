@@ -1,6 +1,6 @@
 
 {if $productPrice < 1000 }
-<script src="https://widgets.shophumm.com.au/content/scripts/price-info.js?productPrice={$productPrice}&LittleThings"></script>
+<script src="https://bpi.humm-au.com/au/content/scripts/price-info_sync.js?productPrice={$productPrice}"></script>
 {else}
-    <script src="https://widgets.shophumm.com.au/content/scripts/price-info.js?productPrice={$productPrice}&BigOnly"></script>
+    <script src="https://bpi.humm-au.com/au/content/scripts/price-info_sync.js?productPrice={$productPrice}&BigOnly"></script>
 {/if}
