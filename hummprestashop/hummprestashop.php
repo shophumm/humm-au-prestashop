@@ -337,8 +337,7 @@ class Hummprestashop extends PaymentModule
                         'required' => true,
                         'options' => array(
                             'query' => array(
-                                array('id' => 'AU', 'name' => 'Australia'),
-                                array('id' => 'NZ', 'name' => 'New Zealand'),
+                                array('id' => 'AU', 'name' => 'Australia'),                                
                             ),
                             'id' => 'id',
                             'name' => 'name',
@@ -693,12 +692,10 @@ class Hummprestashop extends PaymentModule
             $msg = "Orders under $80 are not supported by humm";
 
         $countryNames = array(
-            'AU' => 'Australia',
-            'NZ' => 'New Zealand'
+            'AU' => 'Australia'
         );
         $currencyCodes = array(
-            'AU' => 'AUD',
-            'NZ' => 'NZD'
+            'AU' => 'AUD'
         );
         $countryCode = Configuration::get('HUMM_COUNTRY');
 
