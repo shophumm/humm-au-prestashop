@@ -192,7 +192,7 @@ class Hummprestashop extends PaymentModule
                 $postErrors[] = $this->l('Is Test? is required.');
             }
             if (!Tools::getValue('HUMM_MERCHANT_ID')) {
-                $postErrors[] = $this->l('Merchant ID is required.');
+                $postErrors[] = $this->l('Merchant Number is required.');
             }
             if (!Tools::getValue('HUMM_API_KEY') && !Configuration::get('HUMM_API_KEY')) //read comment in postProcess() about the particularity of 'password' type input fields
             {
@@ -368,7 +368,7 @@ class Hummprestashop extends PaymentModule
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('FORCE HUMM'),
+                        'label' => $this->l('Force humm'),
                         'name' => 'HUMM_FORCE_HUMM',
                         'required' => true,
                         'options' => array(
@@ -383,7 +383,7 @@ class Hummprestashop extends PaymentModule
 
                     array(
                         'type' => 'select',
-                        'label' => $this->l('HUMM LOG'),
+                        'label' => $this->l('Enable Logging?'),
                         'name' => 'HUMM_LOG',
                         'required' => true,
                         'options' => array(
@@ -405,10 +405,10 @@ class Hummprestashop extends PaymentModule
 
                     array(
                         'type' => 'text',
-                        'label' => $this->l('Merchant ID'),
+                        'label' => $this->l('Merchant Number'),
                         'prefix' => '<i class="icon icon-user"></i>',
                         'name' => 'HUMM_MERCHANT_ID',
-                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
+                        'desc' => $this->l('This is the unique number that identifies you as a merchant at humm.'),
                         'required' => true
                     ),
                     array(
