@@ -344,6 +344,22 @@ class Hummprestashop extends PaymentModule
                         ),
                     ),
                     array(
+                        'type' => 'text',
+                        'label' => $this->l('Merchant Number'),
+                        'prefix' => '<i class="icon icon-user"></i>',
+                        'name' => 'HUMM_MERCHANT_ID',
+                        'desc' => $this->l('This is the unique number that identifies you as a merchant at humm.'),
+                        'required' => true
+                    ),
+                    array(
+                        'type' => 'password',
+                        'label' => $this->l('API Key'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'name' => 'HUMM_API_KEY',
+                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
+                        'required' => true
+                    ),
+                    array(
                         'type' => 'html',
                         'label' => $this->l("Minimum Order Amount"),
                         'desc' => $this->l('Minimum value must be greater or equal to 80 to use humm at checkout.'),
@@ -380,7 +396,6 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
-
                     array(
                         'type' => 'select',
                         'label' => $this->l('Enable Logging?'),
@@ -401,23 +416,6 @@ class Hummprestashop extends PaymentModule
                         'prefix' => '<i class="icon icon-globe"></i>',
                         'name' => 'HUMM_GATEWAY_URL',
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
-                    ),
-
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Merchant Number'),
-                        'prefix' => '<i class="icon icon-user"></i>',
-                        'name' => 'HUMM_MERCHANT_ID',
-                        'desc' => $this->l('This is the unique number that identifies you as a merchant at humm.'),
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'password',
-                        'label' => $this->l('API Key'),
-                        'prefix' => '<i class="icon icon-key"></i>',
-                        'name' => 'HUMM_API_KEY',
-                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
-                        'required' => true
                     ),
                 ),
             ),
