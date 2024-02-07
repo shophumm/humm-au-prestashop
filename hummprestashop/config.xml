@@ -3,7 +3,7 @@
 	<name>hummprestashop</name>
 	<displayName><![CDATA[humm]]></displayName>
 	<version><![CDATA[humm_plugin_version_placeholder]]></version>
-	<description><![CDATA[Accept payments for your products via humm.]]></description>
+	<description><![CDATA[humm - The Bigger Buy Now Pay Later.]]></description>
 	<author><![CDATA[Hhmm]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>

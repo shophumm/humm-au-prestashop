@@ -51,7 +51,7 @@ class Hummprestashop extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('humm');
-        $this->description = $this->l('Accept payments for your products via humm.');
+        $this->description = $this->l('The Bigger Buy Now Pay Later.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the humm module?');
 
@@ -273,14 +273,14 @@ class Hummprestashop extends PaymentModule
             array(
                 'type' => 'text',
                 'label' => $this->l("Minimum Order Amount"),
-                'desc' => $this->l('(Must be number) Minimum value must be greater or equal to 80 to use humm at checkout..'),
+                'desc' => $this->l('(Must be number) Minimum value must be greater or equal to 80 to use humm at checkout.'),
                 'name' => 'HUMM_MIN_ORDER',
-                'placeholder' => '0'
+                'placeholder' => '80'
             ) :
             array(
                 'type' => 'html',
                 'label' => $this->l("Minimum Order Amount"),
-                'desc' => $this->l('Minimum value must be greater or equal to 80 to use humm at checkout..'),
+                'desc' => $this->l('Minimum value must be greater or equal to 80 to use humm at checkout.'),
                 'name' => 'HUMM_MIN_ORDER',
                 'size' => 32,
                 'required' => true,
@@ -338,6 +338,22 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Merchant Number'),
+                        'prefix' => '<i class="icon icon-user"></i>',
+                        'name' => 'HUMM_MERCHANT_ID',
+                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
+                        'required' => true
+                    ),
+                    array(
+                        'type' => 'password',
+                        'label' => $this->l('API Key'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'name' => 'HUMM_API_KEY',
+                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
+                        'required' => true
+                    ),
                     $minimumAmountField,
                     array(
                         'type' => 'select',
@@ -367,7 +383,6 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
-
                     array(
                         'type' => 'select',
                         'label' => $this->l('Enable Logging?'),
@@ -388,24 +403,7 @@ class Hummprestashop extends PaymentModule
                         'prefix' => '<i class="icon icon-globe"></i>',
                         'name' => 'HUMM_GATEWAY_URL',
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
-                    ),
-
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Merchant Number'),
-                        'prefix' => '<i class="icon icon-user"></i>',
-                        'name' => 'HUMM_MERCHANT_ID',
-                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'password',
-                        'label' => $this->l('API Key'),
-                        'prefix' => '<i class="icon icon-key"></i>',
-                        'name' => 'HUMM_API_KEY',
-                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
-                        'required' => true
-                    ),
+                    ),                   
                 ),
             ),
         );
