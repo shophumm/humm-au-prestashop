@@ -3,7 +3,7 @@
     <name>hummprestashop</name>
     <displayName><![CDATA[humm]]></displayName>
     <version><![CDATA[1.5.9-forPS1.7-8.1.3]]></version>
-    <description><![CDATA[Accept payments for your products via humm.]]></description>
+    <description><![CDATA[The Bigger Buy Now Pay Later. Accept payments for your products via humm.]]></description>
     <author><![CDATA[humm]]></author>
     <tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>

@@ -51,7 +51,7 @@ class Hummprestashop extends PaymentModule
         parent::__construct();
 
         $this->displayName = $this->l('humm');
-        $this->description = $this->l('Accept payments for your products via humm.');
+        $this->description = $this->l('The Bigger Buy Now Pay Later.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the humm module?');
         $this->author = 'humm';
