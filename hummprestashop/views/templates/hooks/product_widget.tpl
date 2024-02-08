@@ -1,2 +1,2 @@
 
-<script src="https://widgets.shophumm.com.au/content/scripts/price-info.js?productPrice={$productPrice}&LittleThings"></script>
+<script src="https://bpi.humm-au.com/au/content/scripts/price-info_sync.js?productPrice={$productPrice}"></script>
