@@ -50,8 +50,8 @@ class Hummprestashop extends PaymentModule
 
         parent::__construct();
 
-        $this->displayName = $this->l('Humm prestashop');
-        $this->description = $this->l('Accept payments for your products via humm.');
+        $this->displayName = $this->l('humm');
+        $this->description = $this->l('The Bigger Buy Now Pay Later.');
 
         $this->confirmUninstall = $this->l('Are you sure you want to uninstall the humm module?');
 
@@ -138,7 +138,7 @@ class Hummprestashop extends PaymentModule
             $postErrors = $this->_postValidation();
             $this->postProcess(); //we still want to save the correct settings, otherwise they'll be lost the first time
             if (!count($postErrors)) {
-                $html .= $this->displayConfirmation($this->l('Humm settings updated.'));
+                $html .= $this->displayConfirmation($this->l('humm settings updated.'));
             } else {
                 foreach ($postErrors as $err) {
                     $html .= $this->displayError($err);
@@ -170,7 +170,7 @@ class Hummprestashop extends PaymentModule
                 $postErrors[] = $this->l('Is Test? is required.');
             }
             if (!Tools::getValue('HUMM_MERCHANT_ID')) {
-                $postErrors[] = $this->l('Merchant ID is required.');
+                $postErrors[] = $this->l('Merchant Number is required.');
             }
             if (!Tools::getValue('HUMM_API_KEY') && !Configuration::get('HUMM_API_KEY')) //read comment in postProcess() about the particularity of 'password' type input fields
             {
@@ -272,19 +272,19 @@ class Hummprestashop extends PaymentModule
         $minimumAmountField = $pre16 ?
             array(
                 'type' => 'text',
-                'label' => $this->l("Minimum Order Value"),
-                'desc' => $this->l('(Must be number) You can set the minimum order/cart value for Humm to show at checkout.'),
+                'label' => $this->l("Minimum Order Amount"),
+                'desc' => $this->l('(Must be number) Minimum value must be greater or equal to 80 to use humm at checkout.'),
                 'name' => 'HUMM_MIN_ORDER',
-                'placeholder' => '0'
+                'placeholder' => '80'
             ) :
             array(
                 'type' => 'html',
-                'label' => $this->l("Minimum Order Value"),
-                'desc' => $this->l('You can set the minimum order/cart value for Humm to show at checkout.'),
+                'label' => $this->l("Minimum Order Amount"),
+                'desc' => $this->l('Minimum value must be greater or equal to 80 to use humm at checkout.'),
                 'name' => 'HUMM_MIN_ORDER',
                 'size' => 32,
                 'required' => true,
-                'html_content' => "<input type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
+                'html_content' => "<input min='80' max='30000' type='number' name='HUMM_MIN_ORDER' id='HUMM_MIN_ORDER' required='required' value='" . (double)Tools::getValue('HUMM_MIN_ORDER', Configuration::get('HUMM_MIN_ORDER')) . "' class='form-control' />"
             );
         return array(
             'form' => array(
@@ -300,7 +300,6 @@ class Hummprestashop extends PaymentModule
                         'required' => true,
                         'options' => array(
                             'query' => array(
-                                array('id' => 'Oxipay', 'name' => 'oxipay'),
                                 array('id' => 'Humm', 'name' => 'humm'),
                             ),
                             'id' => 'id',
@@ -309,7 +308,7 @@ class Hummprestashop extends PaymentModule
                     ),
                     array(
                         'type' => 'switch',
-                        'label' => $this->l('Active'),
+                        'label' => $this->l('Status'),
                         'name' => "HUMM_IS_ACTIVE",
                         'is_bool' => true,
                         'class' => 't',
@@ -333,17 +332,32 @@ class Hummprestashop extends PaymentModule
                         'required' => true,
                         'options' => array(
                             'query' => array(
-                                array('id' => 'AU', 'name' => 'Australia'),
-                                array('id' => 'NZ', 'name' => 'New Zealand'),
+                                array('id' => 'AU', 'name' => 'Australia'),                                
                             ),
                             'id' => 'id',
                             'name' => 'name',
                         ),
                     ),
+                    array(
+                        'type' => 'text',
+                        'label' => $this->l('Merchant Number'),
+                        'prefix' => '<i class="icon icon-user"></i>',
+                        'name' => 'HUMM_MERCHANT_ID',
+                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
+                        'required' => true
+                    ),
+                    array(
+                        'type' => 'password',
+                        'label' => $this->l('API Key'),
+                        'prefix' => '<i class="icon icon-key"></i>',
+                        'name' => 'HUMM_API_KEY',
+                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
+                        'required' => true
+                    ),
                     $minimumAmountField,
                     array(
                         'type' => 'select',
-                        'label' => $this->l('Is Test?'),
+                        'label' => $this->l('Sandbox Mode?'),
                         'name' => 'HUMM_TEST',
                         'required' => true,
                         'options' => array(
@@ -357,7 +371,7 @@ class Hummprestashop extends PaymentModule
                     ),
                     array(
                         'type' => 'select',
-                        'label' => $this->l('FORCE HUMM'),
+                        'label' => $this->l('Force humm'),
                         'name' => 'HUMM_FORCE_HUMM',
                         'required' => true,
                         'options' => array(
@@ -369,10 +383,9 @@ class Hummprestashop extends PaymentModule
                             'name' => 'name',
                         ),
                     ),
-
                     array(
                         'type' => 'select',
-                        'label' => $this->l('HUMM LOG'),
+                        'label' => $this->l('Enable Logging?'),
                         'name' => 'HUMM_LOG',
                         'required' => true,
                         'options' => array(
@@ -390,24 +403,7 @@ class Hummprestashop extends PaymentModule
                         'prefix' => '<i class="icon icon-globe"></i>',
                         'name' => 'HUMM_GATEWAY_URL',
                         'desc' => $this->l('This overrides the checkout URL of the payment service. Mainly for testing purpose only. Leave it empty if you are not sure.')
-                    ),
-
-                    array(
-                        'type' => 'text',
-                        'label' => $this->l('Merchant ID'),
-                        'prefix' => '<i class="icon icon-user"></i>',
-                        'name' => 'HUMM_MERCHANT_ID',
-                        'desc' => $this->l('This is the unique number that identifies you as a merchant to the humm Payment Gateway.'),
-                        'required' => true
-                    ),
-                    array(
-                        'type' => 'password',
-                        'label' => $this->l('API Key'),
-                        'prefix' => '<i class="icon icon-key"></i>',
-                        'name' => 'HUMM_API_KEY',
-                        'desc' => $this->l('This is used to authenticate you as a merchant and to ensure that no one can tamper with the information sent as part of purchase orders.'),
-                        'required' => true
-                    ),
+                    ),                   
                 ),
             ),
         );
@@ -651,17 +647,17 @@ class Hummprestashop extends PaymentModule
         $shippingCountryIsoCode = (new Country($shippingAddress->id_country))->iso_code;
         $currencyIsoCode = $currency->iso_code;
 
-        if ($cart->getOrderTotal() <= Configuration::get('HUMM_MIN_ORDER')) {
+        if ($cart->getOrderTotal() <= Configuration::get('HUMM_MIN_ORDER'))
             return " doesn't support purchases less than $" . Configuration::get('HUMM_MIN_ORDER');
-        }
+        
+        if ($cart->getOrderTotal() < 80)
+            $msg = "Orders under $80 are not supported by humm";
 
         $countryNames = array(
-            'AU' => 'Australia',
-            'NZ' => 'New Zealand'
+            'AU' => 'Australia'
         );
         $currencyCodes = array(
-            'AU' => 'AUD',
-            'NZ' => 'NZD'
+            'AU' => 'AUD'
         );
         $countryCode = Configuration::get('HUMM_COUNTRY');
 

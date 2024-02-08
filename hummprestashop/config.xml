@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <module>
 	<name>hummprestashop</name>
-	<displayName><![CDATA[Humm prestashop]]></displayName>
+	<displayName><![CDATA[humm]]></displayName>
 	<version><![CDATA[humm_plugin_version_placeholder]]></version>
-	<description><![CDATA[Accept payments for your products via humm.]]></description>
-	<author><![CDATA[Humm]]></author>
+	<description><![CDATA[humm - The Bigger Buy Now Pay Later.]]></description>
+	<author><![CDATA[Hhmm]]></author>
 	<tab><![CDATA[payments_gateways]]></tab>
 	<confirmUninstall><![CDATA[Are you sure you want to uninstall the humm module?]]></confirmUninstall>
 	<is_configurable>1</is_configurable>

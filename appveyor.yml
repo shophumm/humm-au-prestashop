@@ -31,7 +31,7 @@ deploy:
 notifications:
   - provider: Email
     to:
-      - devadmin@shophumm.com.au
+      - pit@shophumm.com.au
   - provider: Slack
     auth_token:
       secure: lgjOGAi/xfra+Ezjg696zGwfMyEivWbNo6ho9GwbeQConO2VwxX2txxjWrZVqAaxTtI7y/ODz0HG3uMfIiM5wF2Fa0KsT8I+KL7PW9BbzpQ=
