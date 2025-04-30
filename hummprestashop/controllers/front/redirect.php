@@ -39,9 +39,9 @@ class HummprestashopRedirectModuleFrontController extends ModuleFrontController
      */
     const URLS = [
         'AU' => [
-            'sandboxURL' => 'https://integration-cart.shophumm.com.au/Checkout?platform=Default',
+            'sandboxURL' => 'https://cart.dev.anz.humm-global.com/Checkout?platform=Default',
             'liveURL' => 'https://cart.shophumm.com.au/Checkout?platform=Default',
-            'sandbox_refund_address' => 'https://integration-buyerapi.shophumm.com.au/api/ExternalRefund/v1/processrefund',
+            'sandbox_refund_address' => 'https://cart.dev.anz.humm-global.com/api/ExternalRefund/v1/processrefund',
             'live_refund_address' => 'https://buyerapi.shophumm.com.au/api/ExternalRefund/v1/processrefund',
         ],
         'NZ_Oxipay' => [
